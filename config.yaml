@@ -1,0 +1,14 @@
+jira:
+        server: <<Server URL>> 
+        username: <<Username>>
+        password: <Password>>
+
+project:
+        - key: <<JIRA Project key>>
+          name: <<Name of the JIRA Project>>
+          board: 6597
+          team: 13920
+        - key: <<Jira Project KEY>>
+          name: <<Name of the JIRA Project>>
+          board: 6497
+          team: 13998
