@@ -1,2 +1,5 @@
 jira==1.0.9
 py2exe
+wheel
+PyYAML==3.12
+argparse==1.4.0

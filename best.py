@@ -32,6 +32,48 @@ from utils import Issue, JiraConn, ConfigFile
 import argparse
 import sys
 
+class BatchEstimate:
+	total_estimate = 0
+	estimates = None
+	keys = None
+	jc = None
+
+	def __init__(__self__, jc, estimates, keys):
+		if (estimates is None and keys is None):
+			print("Class cannot be instatiated, both estimates and keys cannot be None")
+			raise AssertionError()
+		if (estimates):
+			assert(keys is None)
+			__self__.estimates = estimates
+		if (keys):
+			assert(estimates is None)
+			__self__.keys = keys
+		__self__.jc = jc
+
+	def batch_alter(__self__):
+		tot = 0
+		for e in __self__.estimates:
+			key_and_estimate = e.split(':')
+			key = key_and_estimate[0]
+			estimate = key_and_estimate[1]
+			tot += int(0 if estimate is None else estimate)
+			issue = Issue(__self__.jc.jira, key)
+			issue.set_estimate_in_story_points(int(estimate))
+		return(tot)
+
+	def show_estimates(__self__):
+		tot = 0
+		if (__self__.keys is None):
+			print("Keys need to specified to show.")
+			raise AssertionError()
+		total_estimate = 0
+		for key in __self__.keys:
+			issue = Issue(__self__.jc.jira, key)
+			estimate = issue.get_estimate_in_story_points()
+			tot += int(0 if estimate is None else estimate)
+			print("{} Est. {}".format(key, estimate))
+		return(tot)
+
 def main():
 	username = password = server = None
 	parser = argparse.ArgumentParser(description='Batch Get and Set \
@@ -59,29 +101,11 @@ def main():
 		password = args.p
 		server = args.s
 	jc = JiraConn(username, password, server)
-	estimates = args.estimates
-	keys = args.keys
+	be = BatchEstimate(jc, args.estimates, args.keys)
 	if (args.action == "show"):
-		if (args.keys is None):
-			print("Keys need to specified to show.")
-			sys.exit(1)
-		if(args.estimates):
-			print("Ignoring provided estimates not valid for show option.")
-		total_estimate = 0
-		for key in args.keys:
-			issue = Issue(jc.jira, key)
-			estimate = issue.get_estimate_in_story_points()
-			total_estimate += int(0 if estimate is None else estimate)
-			print("{} Est. {}".format(key, estimate))
+		total_estimate = be.show_estimates()
 	elif (args.action == "alter"):
-		total_estimate = 0
-		for e in estimates:
-			key_and_estimate = e.split(':')
-			key = key_and_estimate[0]
-			estimate = key_and_estimate[1]
-			total_estimate += int(0 if estimate is None else estimate)
-			issue = Issue(jc.jira, key)
-			issue.set_estimate_in_story_points(int(estimate))
+		total_estimate = be.batch_alter()
 	print("Total Story Points = {}".format(total_estimate))
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 jira:
-        server: <<Server URL>> 
-        username: <<Username>>
-        password: <Password>>
+        server: https://tarsier02.atlassian.net
+        username: rajiv.gangadharan@gmail.com
+        password: Q1w2e3r4%
 
 project:
         - key: <<JIRA Project key>>

@@ -214,7 +214,8 @@ class Issue:
 		self.jira = jira
 		self.i = jira.issue(issue_key)
 		self.key = issue_key
-		self.estimate_in_story_points = self.i.fields.customfield_11213
+		#self.estimate_in_story_points = self.i.fields.customfield_11213
+		self.estimate_in_story_points = self.i.fields.customfield_10014
 		self.summary = self.i.fields.summary
 
 	def get_estimate_in_story_points(self):
@@ -231,7 +232,8 @@ class Issue:
 
 	def set_estimate_in_story_points(self, estimate):
 		try:
-			self.i.update(fields={'customfield_11213':estimate})
+			#self.i.update(fields={'customfield_11213':estimate})
+			self.i.update(fields={'customfield_10014':estimate})
 		except JIRAError as e:
 			print("Updating new estimate failed with {} and {}"\
 					.format(e.status_code, e.text))

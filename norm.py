@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  scopeutil.py
+#  norm.py
 #  
 #  Copyright 2017 Rajiv Gangadharan <rajiv.gangadharan@gmail.com>
 #  
