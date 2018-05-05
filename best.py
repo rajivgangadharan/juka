@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  scopeutil.py
+#  best.py
 #
 #  Copyright 2017 Rajiv Gangadharan <rajiv.gangadharan@gmail.com>
 #
@@ -21,6 +21,13 @@
 #  MA 02110-1301, USA.
 #
 #
+#  The script does either of the two things:
+#  1. Option alter - Accepts a key:value pair of JIRA keys and its story point
+#     estimate and updates the story point field of the story (the JIRA Key)
+#     with the estimate
+#  2. Option show - Accepts a list of JIRA Keys (Stories) and prints their
+#     story point estimate
+###############################################################################
 from utils import Issue, JiraConn, ConfigFile
 import argparse
 import sys
