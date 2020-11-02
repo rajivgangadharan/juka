@@ -1,0 +1,55 @@
+Issue Type : issuetype
+Time Spent : timespent
+Project : project
+Fix Version/s : fixVersions
+Σ Time Spent : aggregatetimespent
+Resolution : resolution
+Resolved : resolutiondate
+Work Ratio : workratio
+Last Viewed : lastViewed
+Watchers : watches
+Images : thumbnail
+Created : created
+Priority : priority
+Labels : labels
+Remaining Estimate : timeestimate
+Σ Original Estimate : aggregatetimeoriginalestimate
+Affects Version/s : versions
+Linked Issues : issuelinks
+Assignee : assignee
+Updated : updated
+Status : status
+Component/s : components
+Key : issuekey
+Original Estimate : timeoriginalestimate
+Description : description
+Sprint : customfield_10010
+Rank : customfield_10011
+[CHART] Date of First Response : customfield_10012
+[CHART] Time in Status : customfield_10013
+Story Points : customfield_10014
+Time Tracking : timetracking
+Epic Name : customfield_10005
+Epic Status : customfield_10006
+Security Level : security
+Epic Colour : customfield_10007
+Epic Link : customfield_10008
+Attachment : attachment
+Σ Remaining Estimate : aggregatetimeestimate
+Parent Link : customfield_10009
+Summary : summary
+Creator : creator
+Sub-tasks : subtasks
+Reporter : reporter
+Σ Progress : aggregateprogress
+Development : customfield_10000
+Team : customfield_10001
+Testing status : customfield_10002
+Test sessions : customfield_10003
+Organizations : customfield_10004
+Environment : environment
+Due Date : duedate
+Progress : progress
+Comment : comment
+Votes : votes
+Log Work : worklog
