@@ -1,0 +1,260 @@
+CRM Number : customfield_19200
+VM Role/Type : customfield_19201
+Subscription Area : customfield_19202
+VM Size (AzureSeries) : customfield_19203
+Delivery Reference : customfield_13100
+Customer Site : customfield_13101
+Number of VM's Needed : customfield_19204
+Resolution : resolution
+Backup Option : customfield_19205
+Networking : customfield_19206
+First Commit Date : customfield_17701
+System Details : customfield_19207
+Archival Project Code : customfield_16608
+Backport study : customfield_10500
+Sprint : customfield_12800
+Scrum Board ID : customfield_16607
+Project Type : customfield_16605
+Technical owner : customfield_11712
+QC Id : customfield_18100
+Last Viewed : lastViewed
+Area of Fix : customfield_20300
+QC Domain Project : customfield_18101
+QC Project : customfield_18102
+Next Release Name : customfield_18103
+Build Date : customfield_14300
+Regression Risk : customfield_18900
+Scrum Project Keys : customfield_16600
+Automation Status : customfield_18901
+Product Sub Family : customfield_16604
+Product Family : customfield_16603
+Support Project Keys : customfield_16602
+Labels : labels
+Version Project Keys : customfield_16601
+Reopened from version/s : customfield_17805
+Expected Release Date : customfield_17804
+Σ Original Estimate : aggregatetimeoriginalestimate
+Product Name : customfield_11703
+Linked Issues : issuelinks
+Assignee : assignee
+Test case Details : customfield_19300
+Component/s : components
+Test case Suit Detail : customfield_19301
+Estimates : customfield_17000
+BRM Version : customfield_17803
+Task Type : customfield_17802
+Initial Planned Version : customfield_17801
+Planned Versions : customfield_17800
+Budget : customfield_10600
+Deadline commit : customfield_10601
+Reviewed : customfield_12900
+Development : customfield_20400
+Reopen Status : customfield_18200
+Sub-Tasks : subtasks
+Product Manager : customfield_14400
+Reporter : reporter
+Raised During : customfield_11801
+Test Session(s) : customfield_11800
+Progress : progress
+Votes : votes
+Log Work : worklog
+Issue Type : issuetype
+Theme Link : customfield_19400
+Requirement Details : customfield_17101
+Requirement Documentation : customfield_17100
+Project : project
+OpenAir Project Name : customfield_13300
+Branch name : customfield_11001
+Account : customfield_11002
+Customer Name : customfield_13302
+Contact : customfield_11003
+Found in Build : customfield_13301
+SFDC Engineering Case : customfield_11004
+Technical Progress (%) : customfield_15601
+JIRA Capture jQuery Version : customfield_12205
+Testers : customfield_10700
+Release found : customfield_10703
+Resolved : resolutiondate
+Watchers : watches
+QA Root Cause : customfield_18300
+QA RCA Details : customfield_18301
+Priority Order : customfield_16000
+JIRA Capture User Agent : customfield_12200
+JIRA Capture Operating System : customfield_12202
+Flagged : customfield_16801
+JIRA Capture Browser : customfield_12201
+Flagged : customfield_16800
+JIRA Capture Screen Resolution : customfield_12204
+JIRA Capture URL : customfield_12203
+Defect Origin : customfield_13405
+Epic Color : customfield_15705
+Install/upgrade notes : customfield_11105
+Epic Name : customfield_15703
+Epic Status : customfield_15704
+SFDC Eng Case Created : customfield_13406
+Updated : updated
+Confirmed Date : customfield_13081
+Task Category : customfield_13080
+Meets US Tax Research Credit : customfield_19500
+SFDC Customer Case : customfield_13082
+Contributors : customfield_13085
+SFDC ON : customfield_17200
+Original Estimate : timeoriginalestimate
+Description : description
+Parent summary : customfield_11100
+Parent customer impact : customfield_11101
+Testing Status : customfield_15701
+Epic Link : customfield_15702
+Parent database impact : customfield_11102
+Reopen Date : customfield_13400
+Customer Contact : customfield_13403
+Parent key : customfield_11103
+Time Tracking : timetracking
+JIRA Capture Document Mode : customfield_15700
+Parent source detected : customfield_11104
+URL : customfield_12304
+Verified : customfield_10128
+Validated in version : customfield_10129
+Customer : customfield_10802
+Summary : summary
+Hardware : customfield_13072
+Database(RDBMS) : customfield_13071
+SFDC Re-opened By Flag : customfield_18400
+Targeted Fix Date : customfield_13074
+Operating Systems : customfield_13073
+Scrum Teams : customfield_16100
+Last Good Build Number : customfield_13076
+Detection Stage : customfield_13075
+Root Cause : customfield_13078
+Resolution Details : customfield_10120
+Requirement Type : customfield_10121
+Story Link : customfield_16901
+Requirement Link : customfield_16900
+Story Points : customfield_10002
+Business Value : customfield_10003
+Rank (Obsolete) : customfield_10004
+Environment : environment
+Scenario : customfield_10117
+Acceptance : customfield_10118
+TipsAndFocus : customfield_10119
+Due Date : duedate
+Comment : comment
+External issue ID : customfield_17300
+Release Notes : customfield_13063
+Technical QA Daily Status Announcement : customfield_15000
+Substatus : customfield_13062
+Issue Category : customfield_13065
+Documentation Status : customfield_13064
+Project ID : customfield_13067
+Module : customfield_13066
+CM Engineer : customfield_13069
+Fix Version/s : fixVersions
+Manager : customfield_13068
+Source detected : customfield_10110
+Analysts : customfield_13500
+Assigned User : customfield_19600
+Expected release date - old : customfield_11200
+Found in : customfield_10111
+issueFunction : customfield_15800
+Developers : customfield_13502
+Reviewers : customfield_13501
+SFDC Issue Case : customfield_10104
+Reporting Group : customfield_10107
+Fix Release : customfield_10900
+External ID : customfield_16200
+Priority : priority
+Integrated Release Dates : customfield_18500
+Patch Cutoff : customfield_14700
+Release Version History : customfield_10102
+Legacy ID : customfield_10103
+Esc Defect Category : customfield_15901
+Remaining Estimate : timeestimate
+Affects Version/s : versions
+Status : status
+Key : issuekey
+Release Sub Type : customfield_19703
+Business Driver : customfield_17400
+Defect Classification : customfield_15900
+Release Impact : customfield_19700
+Release Impacts PCI : customfield_19701
+Release Requires DR Update : customfield_19702
+SFDC Cust Case Created : customfield_13600
+Customer impact : customfield_10203
+Σ Remaining Estimate : aggregatetimeestimate
+Creator : creator
+Suspected NFR Date : customfield_20000
+Σ Progress : aggregateprogress
+Release owner : customfield_10320
+Release type : customfield_10321
+Root Cause Analysis : customfield_18600
+Severity : customfield_10200
+Source Product : customfield_14800
+Workaround : customfield_10201
+Database impact : customfield_10202
+End of validation baseline : customfield_10313
+End of validation forecast : customfield_10314
+End of validation completion : customfield_10315
+SFDC Asset : customfield_11405
+Release baseline : customfield_10316
+End of validation owner : customfield_10317
+Release forecast : customfield_10318
+Release completion : customfield_10319
+Target start : customfield_19002
+Target end : customfield_19003
+Time Spent : timespent
+Team : customfield_19000
+Parent Link : customfield_19001
+Rank : customfield_17500
+Request Type : customfield_13025
+Σ Time Spent : aggregatetimespent
+Install forecast : customfield_10310
+Bucket : customfield_19800
+Install completion : customfield_10311
+Technical Writers : customfield_13700
+Install owner : customfield_10312
+Replication Steps : customfield_10302
+Root Cause Analysis Details : customfield_14900
+Deadline commit baseline : customfield_10305
+Deadline commit forecast : customfield_10306
+Deadline commit completion : customfield_10307
+Deadline commit owner : customfield_10308
+Install baseline : customfield_10309
+Work Ratio : workratio
+Time in Status : customfield_20101
+Images : thumbnail
+Planned Estimate : customfield_20100
+Created : created
+Documentation Category : customfield_16400
+Source Control delivery tag : customfield_14100
+Delivery Mode : customfield_18700
+Functional Progress (%) : customfield_12600
+Selected for BRM : customfield_10300
+Regression introduced in : customfield_10301
+SFDC Components : customfield_11502
+Region : customfield_13800
+Original story points : customfield_19100
+Internal Product : customfield_13001
+Sprint1 : customfield_15301
+Closed Date : customfield_13000
+SFDC Customer Severity : customfield_17600
+Performance Category : customfield_19900
+Headline : customfield_12700
+Security Level : security
+Attachment : attachment
+Refined Estimate : customfield_20200
+Octane ID : customfield_20201
+SFDC Customer Replication Steps : customfield_18000
+Team Members : customfield_18801
+SFDC Module : customfield_14200
+Rendez-Vous : customfield_11731
+Client OS : customfield_11730
+Reviewed in BRM on : customfield_10400
+Teams : customfield_18800
+Development center : customfield_11722
+Expected Versions : customfield_11600
+Number of attachments : customfield_11603
+Dataserver OS : customfield_11725
+Server OS : customfield_11728
+Application servers OS : customfield_11727
+Functional QA Daily Status Announcement : customfield_11606
+Browser(s) : customfield_11729

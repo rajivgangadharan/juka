@@ -36,7 +36,7 @@ def main():
 		username = cfg['username']
 		password = cfg['password']
 		server = cfg['server']
-	except FileNotFoundError as e:
+	except FileNotFoundError:
 		print("Config File does not exist, falling back to argument parsing")
 		parser.add_argument('-u', help="Provide User Name")
 		parser.add_argument('-p', help="Provide Password")

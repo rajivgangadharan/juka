@@ -1,1 +1,3 @@
 config.yaml
+.spyproject/*
+__pycache__

@@ -62,5 +62,12 @@ class FieldTable:
 			for key, value in self.ft:
 				print(key + ':' + value, file=ft)
 
+def main():
+	ft = FieldTable()
+	ft.connect2jira()
+	ft.construct_field_table()
+	ft.persist_field_table()
 
 
+if (__name__  == '__main__'):
+	main()

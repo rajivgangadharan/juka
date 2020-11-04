@@ -27,6 +27,7 @@ from jira.exceptions import JIRAError
 from jira.resilientsession import raise_on_error
 from jira.resilientsession import ResilientSession
 from jira import JIRA
+import yaml
 
 class Project:
     key = None
@@ -41,7 +42,7 @@ class Project:
         except JIRAError as e:
             print("Error getting issues list -", e.status_code, e.text)
             raise
-
+    
     def get_all_issues(self):
         jql_str = "project = " + self.key 
         issues = self.jira.search_issues(jql_str) 
@@ -55,19 +56,50 @@ class Project:
         query = pass the query you want here, exclude the project key 
         """
         params = {}
+        results = []
         for key, value in kwargs.items():
             params[key] = value
-
+        
+        max_rows = 0
+        if "max_rows" not in params.keys():
+            max_rows = 50 # the default    
+        else:
+            max_rows = params["max_rows"] # The max rows which is provided
+        
         if params.get("query", None) is not None:
             jql_str = "project = " + self.key + " and " + params["query"]
         else:
             jql_str = "project = " + self.key
         try:
-            result = self.jira.search_issues(jql_str, maxResults=params['max_rows'])
+            start_index = 0
+            block_size = 25
+            block_num = 0
+            print("Executing \"" + jql_str + "\"")
+            while True:
+                start_index = block_size * block_num
+                if block_num == 0:
+                    results = self.jira.search_issues(jql_str, start_index, block_size)
+                    print("getting results.")
+                else:
+                    print("getting more results...")
+                    more_results = self.jira.search_issues(jql_str, start_index, block_size)
+                    if len(more_results) > 0:
+                        print("appending more results.")
+                        for x in more_results:
+                            results.append(x) # Add additional issues to results
+                    if len(more_results) == 0:
+                        print("no more results, breaking..")
+                        break
+                if len(results) == 0:
+                    break
+                if len(results) >= max_rows:
+                    print("max_rows hit. breaking max_rows : ", max_rows)
+                    break
+                block_num += 1
         except JIRAError as e:
             print("Caught error {} {}".format(e.status_code, e.text))
             raise
-        return result
+        return results
 
     def get_epics_for_planned_iteration(self, iteration_string):
         jql_str = "project = " + self.key +\
