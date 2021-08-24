@@ -1,0 +1,32 @@
+---
+#OP:
+#   WorkItems_JAN2020:
+#      created: "2020/01/01" 
+#      issuetypes: 
+#        - Epic
+#        - Story
+#      outputfile: ../Datasets/Opics_2021-06-17_Delivery.csv
+#   Defects_JAN2020:
+#      created: "2020/01/01" 
+#      issuetypes: 
+#        - Defect
+#      outputfile: ../Datasets/Opics_2021-06-17_Defects.csv
+#MPSSC:
+#   WorkItems_JAN2020:
+#      created: "2020/01/01" 
+#      issuetypes: 
+#        - Epic
+#        - Story
+#      outputfile: ../portfolio-insights-book/inst/extdata/mpssc_delivery.csv
+LIQ:
+   WorkItems_JAN2020:
+      created: "2020/01/01" 
+      issuetypes: 
+        - Epic
+        - Story
+      outputfile: ../mtrxbook/inst/extdata/liq_delivery.csv
+   Defects_JAN2020:
+      created: "2020/01/01" 
+      issuetypes: 
+        - Defect
+      outputfile: ../mtrxbook/inst/extdata/liq_defects.csv
