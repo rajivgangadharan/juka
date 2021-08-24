@@ -11,3 +11,5 @@ lib
 .git
 .git/*
 bin
+site_packages
+site-packages
