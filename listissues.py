@@ -26,7 +26,7 @@
 from utils import RunParams, JiraConn, DeferredEpics, ConfigFile, Issue
 from project import Project
 import sys
-import argparse
+import argparse 
 
 def main():
     username = password = server = None
@@ -35,56 +35,50 @@ def main():
         cf = ConfigFile('config.yaml')
         cfg = cf.config
         username = cfg['username']
-        password = cfg['password']
+        password = cfg['password'] 
         server = cfg['server']
     except FileNotFoundError as e:
         print("Config File does not exist." + e.strerror)
         exit(1)
     parser = argparse.ArgumentParser(prog='listissues', description="Will list issues from jira")
     parser.add_argument('--project', help="Provide Project Name", required=True)
-    parser.add_argument('--output', help="Output file", required=False, default="listissues.csv")
-    parser.add_argument("--query", help='Query string to filter your fetch', required=True)
-    parser.add_argument("--batch-size", help='Batch size for Jira fetch', required=False, default=25)
-    parser.add_argument("--max-rows", help='Arrest the number of rows processed', required=False, default=1000)
+    parser.add_argument('--output', help="Output file")
+    parser.add_argument("--query", help='Query string to filter your fetch')
     args = parser.parse_args()
     project_string = args.project
     output_file = args.output
     query_string = args.query
-    max_rows = int(args.max_rows)
-    batch_size = int(args.batch_size)
     if (project_string is None):
         parser.print_help()
         raise Exception("Project is None, check command line")
-
+    
     if (output_file is not None):
         try:
             of = open(output_file, "w")
         except OSError as oe:
             print("Error while opening file for writing - errno {} message {}",
                 oe.errno, oe.strerror)
-            of.close()
             sys.exit(oe.errno)
-
+    
     # Connect to jira
     jc = JiraConn(username, password, server)
-    assert(jc != None)
+    assert(jc != None) 
     p = Project(jc.jira, project_string)
-    issues = p.get_issues_for_query(max_rows=max_rows, query=query_string, block_size=batch_size)
+    issues = p.get_issues_for_query(max_rows=50, query=query_string)
     for i in issues:
-        print("Begining write to output file")
         issue = Issue(jc.jira, i.key)
-        print(issue.i.key, issue.i.fields.issuetype,
+        print(issue.i.key, issue.i.fields.issuetype, 
             issue.i.fields.status, issue.i.fields.priority,
-            issue.i.fields.created, issue.i.fields.updated,
+            issue.i.fields.created, issue.i.fields.updated, 
             issue.i.fields.customfield_13000, sep='|')
         if (output_file is not None):
             print(issue.i.key, issue.i.fields.issuetype,
                   issue.i.fields.status, issue.i.fields.priority,
                   issue.i.fields.created, issue.i.fields.updated,
                   issue.i.fields.customfield_13000, sep='|', file=of)
-    if (output_file is not None):
-        print("Closing data file.")
-        of.close()
 
 if __name__ == '__main__':
     main()
+
+
+

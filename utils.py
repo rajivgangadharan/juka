@@ -85,7 +85,8 @@ class JiraConn:
         try:
             self.jira = JIRA(self.options,
                     basic_auth=(self.username,
-                    self.password))
+                    self.password),
+                    validate=True)
         except JIRAError as e:
             print("Failed Jira connect - {:d} - {:s}"\
                 .format(e.status_code, e.text))

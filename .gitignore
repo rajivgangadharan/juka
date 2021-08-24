@@ -1,15 +1,3 @@
 config.yaml
 .spyproject/*
 __pycache__
-Lib/*
-lib/*
-site_packages/*
-python-wheels/*
-__pycache__/*
-bin
-bin/*
-Scripts
-Scripts/*
-lib64
-lib64/*
-lib

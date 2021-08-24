@@ -42,10 +42,10 @@ class Project:
         except JIRAError as e:
             print("Error getting issues list -", e.status_code, e.text)
             raise
-
+    
     def get_all_issues(self):
-        jql_str = "project = " + self.key
-        issues = self.jira.search_issues(jql_str)
+        jql_str = "project = " + self.key 
+        issues = self.jira.search_issues(jql_str) 
         """ This will return on 50 issues by default
             not modifying it because will never be used """
         return issues
@@ -53,45 +53,35 @@ class Project:
     def get_issues_for_query(self, **kwargs):
         """
         max_rows=50 (default)
-        block_size=25 (default)
-        query = pass the query you want here, exclude the project key
+        query = pass the query you want here, exclude the project key 
         """
         params = {}
         results = []
         for key, value in kwargs.items():
             params[key] = value
-
+        
         max_rows = 0
         if "max_rows" not in params.keys():
-            max_rows = 50 # the default
+            max_rows = 50 # the default    
         else:
-            max_rows = int(params["max_rows"]) # The max rows which is provided
-
-        if "block_size" not in params.keys():
-            block_size=25
-        else:
-            block_size=int(params["block_size"])
-
+            max_rows = params["max_rows"] # The max rows which is provided
+        
         if params.get("query", None) is not None:
             jql_str = "project = " + self.key + " and " + params["query"]
         else:
             jql_str = "project = " + self.key
         try:
             start_index = 0
+            block_size = 25
             block_num = 0
-            if block_size is None:
-                block_size = 100
-
             print("Executing \"" + jql_str + "\"")
-            print("with start_index {} and block_size {}".format(start_index, block_size))
             while True:
                 start_index = block_size * block_num
-                more_results = []
-                if block_num == 0: # this will execute only in the begining
-                    print("getting results. starting index {}".format(start_index))
+                if block_num == 0:
                     results = self.jira.search_issues(jql_str, start_index, block_size)
+                    print("getting results.")
                 else:
-                    print("getting more results...starting index {}".format(start_index))
+                    print("getting more results...")
                     more_results = self.jira.search_issues(jql_str, start_index, block_size)
                     if len(more_results) > 0:
                         print("appending more results.")
