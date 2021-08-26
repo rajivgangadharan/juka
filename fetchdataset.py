@@ -25,7 +25,7 @@
 
 from utils import RunParams, JiraConn, DeferredEpics, ConfigFile, Issue
 from project import Project
-import sys, yaml,  logging
+import sys,yaml,logging
 import argparse
 
 def main():
@@ -38,15 +38,15 @@ def main():
         password = cfg['password']
         server = cfg['server']
     except FileNotFoundError as e:
-        print("Config File does not exist." + e.strerror)
+        logging.error("Config File does not exist." + e.strerror)
         exit(1)
 
     parser = argparse.ArgumentParser(prog='fetchdataset',
             description="Assembling a dataset for delivery insights")
     parser.add_argument("--batch-size", help='Batch size for Jira fetch', required=False, default=25)
     parser.add_argument("--max-rows", help='Arrest the number of rows processed', required=False, default=1000)
-    parser.add_argument("--run_config", help='Config file for run configuration, \
-            defaults to fetchdataset.yaml', required=False, default="fetchdataset.yaml")
+    parser.add_argument("--config", help='Config file (default: fetchdataset.yaml)', required=False, default="fetchdataset.yaml")
+    parser.add_argument("--log-level", help="Set your log level.", required=False, default="CRITICAL")
     args = parser.parse_args()
     max_rows = int(args.max_rows)
     batch_size = int(args.batch_size)
@@ -55,7 +55,7 @@ def main():
     # Connect to jira
     jc = JiraConn(username, password, server)
     assert(jc != None)
-    ######################################################################
+
     try:
         print("YAML configurator not provided,  defaulting to fetchdataset.yaml.")
         with open(run_config_file, 'r') as file:
