@@ -1,32 +1,38 @@
 ---
-#OP:
-#   WorkItems_JAN2020:
-#      created: "2020/01/01" 
-#      issuetypes: 
-#        - Epic
-#        - Story
-#      outputfile: ../Datasets/Opics_2021-06-17_Delivery.csv
-#   Defects_JAN2020:
-#      created: "2020/01/01" 
-#      issuetypes: 
-#        - Defect
-#      outputfile: ../Datasets/Opics_2021-06-17_Defects.csv
-#MPSSC:
-#   WorkItems_JAN2020:
-#      created: "2020/01/01" 
-#      issuetypes: 
-#        - Epic
-#        - Story
-#      outputfile: ../portfolio-insights-book/inst/extdata/mpssc_delivery.csv
-LIQ:
-   WorkItems_JAN2020:
-      created: "2020/01/01" 
+OP:
+   WorkItems_AUG2020:
+      created: "2020/08/01" 
       issuetypes: 
         - Epic
         - Story
-      outputfile: ../mtrxbook/inst/extdata/liq_delivery.csv
-   Defects_JAN2020:
-      created: "2020/01/01" 
+      outputfile: ../mtrxbook-minimal/opics_delivery.csv
+   Defects_AUG2020:
+      created: "2020/08/01" 
       issuetypes: 
         - Defect
-      outputfile: ../mtrxbook/inst/extdata/liq_defects.csv
+      outputfile: ../mtrxbook-minimal/opics_defects.csv
+MPSSC:
+   WorkItems_AUG2020:
+      created: "2020/08/01" 
+      issuetypes: 
+        - Epic
+        - Story
+      outputfile: ../mtrxbook-minimal/inst/extdata/fcc_delivery.csv
+MPS:
+   Defects_AUG2020:
+      created: "2020/08/01" 
+      issuetypes: 
+        - Defect
+      outputfile: ../mtrxbook-minimal/inst/extdata/fcc_defects.csv
+LIQ:
+   WorkItems_AUG2020:
+      created: "2020/08/01" 
+      issuetypes: 
+        - Epic
+        - Story
+      outputfile: ../mtrxbook-minimal/inst/extdata/liq_delivery.csv
+   Defects_AUG2020:
+      created: "2020/08/01" 
+      issuetypes: 
+        - Defect
+      outputfile: ../mtrxbook-minimal/inst/extdata/liq_defects.csv

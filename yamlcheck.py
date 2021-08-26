@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from utils import ConfigFile
 cf = ConfigFile('config.yaml')
 cfg = cf.config
