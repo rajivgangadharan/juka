@@ -1,0 +1,7 @@
+pg:
+   username: reportuser
+   password: reportuser
+   server: <<server ip>>
+   port: 5433
+   table_name: public.report_all
+   database: jiradb
