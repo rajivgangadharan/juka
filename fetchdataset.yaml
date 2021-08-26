@@ -18,21 +18,21 @@
 #        - Epic
 #        - Story
 #      outputfile: ../mtrxbook-minimal/inst/extdata/fcc_delivery.csv
-MPS:
-   Defects_AUG2020:
-      created: "2020/08/01" 
-      issuetypes: 
-        - Defect
-      outputfile: ../mtrxbook-minimal/inst/extdata/fcc_defects.csv
-#LIQ:
+#MPS:
+#   Defects_AUG2020:
+#      created: "2020/08/01" 
+#      issuetypes: 
+#        - Defect
+#      outputfile: ../mtrxbook-minimal/inst/extdata/fcc_defects.csv
+LIQ:
 #   WorkItems_AUG2020:
 #      created: "2020/08/01" 
 #      issuetypes: 
 #        - Epic
 #        - Story
 #      outputfile: ../mtrxbook-minimal/inst/extdata/liq_delivery.csv
-#   Defects_AUG2020:
-#      created: "2020/08/01" 
-#      issuetypes: 
-#        - Defect
-#      outputfile: ../mtrxbook-minimal/inst/extdata/liq_defects.csv
+   Defects_AUG2020:
+      created: "2020/08/01" 
+      issuetypes: 
+        - Defect
+      outputfile: ../mtrxbook-minimal/inst/extdata/liq_defects.csv

@@ -23,7 +23,7 @@
 #
 # Module Jira Utilities for Maintaining Data. Rajiv Gangadharan (Sep.2017)
 
-from utils import RunParams, JiraConn, DeferredEpics, ConfigFile, Issue
+from utils import JiraConn, ConfigFile
 from project import Project
 import sys,yaml,logging
 import argparse
@@ -50,7 +50,18 @@ def main():
     args = parser.parse_args()
     max_rows = int(args.max_rows)
     batch_size = int(args.batch_size)
-    run_config_file = args.run_config
+    run_config_file = args.config
+    loglevel = args.log_level
+
+    numeric_log_level = getattr(logging, loglevel.upper())
+    if (not isinstance(numeric_log_level, int)):
+        raise ValueError("Invalid numeric_log_level : %s" % numeric_log_level)
+    logging.basicConfig(filename="fetchdataset.log",
+                        level=numeric_log_level,
+                        filemode='a',
+                        format="%(asctime)s %(message)s",
+                        datefmt="%Y:%m:%d %H:%M:%S")
+        
 
     # Connect to jira
     jc = JiraConn(username, password, server)
@@ -61,7 +72,7 @@ def main():
         with open(run_config_file, 'r') as file:
             dsconfig = yaml.safe_load(file)
     except FileNotFoundError as e:
-        print("Error, yaml configurator absent, does file exist?")
+        print("Error, yaml configurator absent, does file exist?"+ e)
         exit(200)
     except Exception as e:
         print("Exception occured " + e)
@@ -82,15 +93,15 @@ def main():
             issues = p.get_issues_for_query(max_rows=max_rows,
                 query=querystr,
                 block_size=batch_size)
-            print("Collected # " + str(len(issues)) + " issues.")
-
+            logging.info("Collected # " + str(len(issues)) + " issues.")
+        
             # Check if output file can be successfully opened
             # Opening output file
             if (output_file is not None):
                     try:
                         of = open(output_file, "w")
                     except OSError as oe:
-                        print("Error openign file - errno {} message {}",  oe.errno, oe.strerror)
+                        print("Error opening file - errno {} message {}",  oe.errno, oe.strerror)
                         of.close()
                         sys.exit(oe.errno)
 
@@ -116,7 +127,7 @@ def main():
 
             if (output_file is not None):
                 of.close()
-                print("Wrote data file ", output_file)
+                logging.info("Wrote data file ", output_file)
         ######################################################################
 if __name__ == '__main__':
     main()

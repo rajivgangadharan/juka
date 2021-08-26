@@ -56,49 +56,72 @@ class Project:
         query = pass the query you want here, exclude the project key 
         """
         params = {}
-        results = []
         for key, value in kwargs.items():
             params[key] = value
         
         max_rows = 0
         if "max_rows" not in params.keys():
-            max_rows = 50 # the default    
+            max_rows = 5000 # the default    
         else:
             max_rows = params["max_rows"] # The max rows which is provided
+            
+        if "block_size" not in params.keys():
+            block_size=1000
+        else:
+            block_size = params["block_size"]
+            
         
         if params.get("query", None) is not None:
             jql_str = "project = " + self.key + " and " + params["query"]
         else:
             jql_str = "project = " + self.key
-        try:
-            start_index = 0
-            block_size = 25
-            block_num = 0
-            print("Executing \"" + jql_str + "\"")
-            while True:
-                start_index = block_size * block_num
-                if block_num == 0:
-                    results = self.jira.search_issues(jql_str, start_index, block_size)
-                    print("getting results.")
-                else:
-                    print("getting more results...")
-                    more_results = self.jira.search_issues(jql_str, start_index, block_size)
-                    if len(more_results) > 0:
-                        print("appending more results.")
-                        for x in more_results:
-                            results.append(x) # Add additional issues to results
-                    if len(more_results) == 0:
-                        print("no more results, breaking..")
-                        break
-                if len(results) == 0:
-                    break
-                if len(results) >= max_rows:
-                    print("max_rows hit. breaking max_rows : ", max_rows)
-                    break
+
+        start_index = 0
+        block_num = 0
+        print("Executing \"" + jql_str + "\"")
+        results = list()
+        batch = list()
+        while True:
+            start_index = block_size * block_num
+            ### Change begins - refactor 1
+            try:
+                batch = self.jira.search_issues(jql_str, start_index, block_size)
+            except JIRAError as e:
+                print("Caught error {} {}".format(e.status_code, e.text))
+                raise
+
+            if len(batch) > 0:
+                print("Extending results start_index %d block_num %d" % (start_index, block_num))
+                results.extend(batch)
                 block_num += 1
-        except JIRAError as e:
-            print("Caught error {} {}".format(e.status_code, e.text))
-            raise
+            elif len(batch) == 0:
+                print("No more rows. breaking")
+                break
+            elif len(results) > max_rows:
+                print("max_row hit, breaking")
+                break
+            ### Change ends   - refactor 1
+
+            # if block_num == 0:
+            #     results = self.jira.search_issues(jql_str, start_index, block_size)
+            #     print("getting results.")
+            # else:
+            #     print("getting more results...")
+            #     more_results = self.jira.search_issues(jql_str, start_index, block_size)
+            #     if len(more_results) > 0:
+            #         print("appending more results.")
+            #         for x in more_results:
+            #             results.append(x) # Add additional issues to results
+            #     if len(more_results) == 0:
+            #         print("no more results, breaking..")
+            #         break
+            # if len(results) == 0:
+            #     break
+            # if len(results) >= max_rows:
+            #     print("max_rows hit. breaking max_rows : ", max_rows)
+            #     break
+            # block_num += 1
+        print("Returning %d rows" % (len(results))) 
         return results
 
     def get_epics_for_planned_iteration(self, iteration_string):
