@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+#  listissues.py
+#
+#  Copyright 2017 Rajiv Gangadharan <rajiv.gangadharan@gmail.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#
+#
+# Module Jira Utilities for Maintaining Data. Rajiv Gangadharan (Sep.2017)
+import sys
+from pgutils import PGConfigFile,PGConn
+from pgproject import PGProject
+import sys,yaml,logging
+import argparse
+import psycopg2
+
+def main():
+    username = password = server = None
+    cfg = None
+    try:
+        cf = PGConfigFile('pgconfig.yaml')
+        cfg = cf.config
+        username = cfg['username']
+        password = cfg['password']
+        server = cfg['server']
+        port = cfg['port']
+        database = cfg['database']
+    except FileNotFoundError as e:
+        logging.error("Config File does not exist." + e.strerror)
+        exit(1)
+
+    parser = argparse.ArgumentParser(prog='pgfetchdataset',
+            description="Assembling a dataset from Postgres Reporting Databse for delivery insights")
+    parser.add_argument("--max-rows", help='Arrest the number of rows processed', required=False, default=1000)
+    parser.add_argument("--config", help='Config file (default: fetchdataset.yaml)', required=False, default="pgfetchdataset.yaml")
+    parser.add_argument("--log-level", help="Set your log level.", required=False, default="CRITICAL")
+    args = parser.parse_args()
+    max_rows = int(args.max_rows)
+    run_config_file = args.config
+    loglevel = args.log_level
+
+    numeric_log_level = getattr(logging, loglevel.upper())
+    if (not isinstance(numeric_log_level, int)):
+        raise ValueError("Invalid numeric_log_level : %s" % numeric_log_level)
+    logging.basicConfig(filename="pgfetchdataset.log",
+                        level=numeric_log_level,
+                        filemode='a',
+                        format="%(asctime)s %(message)s",
+                        datefmt="%Y:%m:%d %H:%M:%S")
+
+
+    # Connect to jira
+    pg = PGConn(username, password, server, port, database)
+    pgconn = pg.pgconn
+    assert(pgconn != None)
+
+    try:
+        print("YAML configurator not provided,  defaulting to pgfetchdataset.yaml.")
+        with open(run_config_file, 'r') as file:
+            dsconfig = yaml.safe_load(file)
+    except FileNotFoundError as e:
+        print("Error, yaml configurator absent, does file exist?"+ e)
+        exit(200)
+    except Exception as e:
+        print("Exception occured " + e)
+        exit(201)
+
+    for project in dsconfig:
+        if (project is None):
+            raise Exception("Project is None, check yaml file")
+        p = PGProject(pgconn, project)
+        for query in dsconfig[project].keys():
+            created = dsconfig[project][query]['created']
+            types = dsconfig[project][query]['issuetypes']
+            output_file = dsconfig[project][query]['outputfile']
+            issuetypes = ', '.join("\'" + t + "\'"  for t in types)
+            querystr = 'issue_type in ('  +\
+             issuetypes +  \
+             ') AND created_on >= ?' 
+            print("Executing " + querystr + " for " + project)
+            issues = p.get_issues_for_query(max_rows=max_rows, query=querystr)
+            logging.info("Collected # " + str(len(issues)) + " issues.")
+
+            # Check if output file can be successfully opened
+            # Opening output file
+            if (output_file is not None):
+                    try:
+                        of = open(output_file, "w")
+                    except OSError as oe:
+                        print("Error opening file - errno {} message {}",  oe.errno, oe.strerror)
+                        of.close()
+                        sys.exit(oe.errno)
+
+            # Write the header
+            header = [
+                    "Key",
+                    "Type",
+                    "Status",
+                    "Priority",
+                    "Created",
+                    "Updated",
+                    "Closed"
+                ]
+            print(*header, sep='\t', file=of)
+            for i in issues:
+                print(i.key,
+                        i.fields.issuetype,
+                        i.fields.status,
+                        i.fields.priority,
+                        i.fields.created,
+                        i.fields.updated,
+                        i.fields.customfield_13000, sep="\t", file=of)
+
+            if (output_file is not None):
+                of.close()
+                logging.info("Wrote data file ", output_file)
+        ######################################################################
+if __name__ == '__main__':
+    main()
