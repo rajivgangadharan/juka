@@ -3,3 +3,4 @@ py2exe
 wheel
 pyyaml>=4.2b1
 argparse==1.4.0
+logging

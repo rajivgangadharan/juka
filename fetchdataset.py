@@ -25,12 +25,7 @@
 
 from utils import RunParams, JiraConn, DeferredEpics, ConfigFile, Issue
 from project import Project
-import sys
-import argparse
-import yaml
-from utils import RunParams, JiraConn, DeferredEpics, ConfigFile, Issue
-from project import Project
-import sys
+import sys, yaml,  logging
 import argparse
 
 def main():
@@ -89,15 +84,16 @@ def main():
                 block_size=batch_size)
             print("Collected # " + str(len(issues)) + " issues.")
 
+            # Check if output file can be successfully opened
             # Opening output file
             if (output_file is not None):
-                try:
-                    of = open(output_file, "w")
-                except OSError as oe:
-                    print("Error while opening file for writing - errno {} message {}",
-                        oe.errno, oe.strerror)
-                    of.close()
-                    sys.exit(oe.errno)
+                    try:
+                        of = open(output_file, "w")
+                    except OSError as oe:
+                        print("Error openign file - errno {} message {}",  oe.errno, oe.strerror)
+                        of.close()
+                        sys.exit(oe.errno)
+
             # Write the header
             header = [
                     "Key",
@@ -119,8 +115,8 @@ def main():
                         i.fields.customfield_13000, sep="\t", file=of)
 
             if (output_file is not None):
-                print("Closing data file.")
                 of.close()
+                print("Wrote data file ", output_file)
         ######################################################################
 if __name__ == '__main__':
     main()

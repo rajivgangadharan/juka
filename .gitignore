@@ -13,3 +13,5 @@ lib
 bin
 site_packages
 site-packages
+lib64
+Scripts/*
