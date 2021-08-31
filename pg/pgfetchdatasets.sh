@@ -1,1 +1,2 @@
-python3 pgfetchdataset.py  --max-rows 2000 --batch-size=1000
+#!/usr/bin/bash
+python pgfetchdataset.py

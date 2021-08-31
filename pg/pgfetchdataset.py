@@ -28,6 +28,7 @@ from pgproject import PGProject
 import sys,yaml,logging
 import argparse
 import psycopg2
+from string import Template
 
 def main():
     username = password = server = None
@@ -73,6 +74,7 @@ def main():
         print("YAML configurator not provided,  defaulting to pgfetchdataset.yaml.")
         with open(run_config_file, 'r') as file:
             dsconfig = yaml.safe_load(file)
+            print(dsconfig)
     except FileNotFoundError as e:
         print("Error, yaml configurator absent, does file exist?"+ e)
         exit(200)
@@ -89,9 +91,17 @@ def main():
             types = dsconfig[project][query]['issuetypes']
             output_file = dsconfig[project][query]['outputfile']
             issuetypes = ', '.join("\'" + t + "\'"  for t in types)
-            querystr = 'issue_type in ('  +\
-             issuetypes +  \
-             ') AND created_on >= ?' 
+            #querystr = 'ISSUE_TYPE in ('  +\
+            #issuetypes +  \
+            #') AND created_on >= $CREATED_DATE'
+            query_templ_str = """ISSUE_TYPE in (
+            $issue_types
+            ) AND created_on >= $created_date"""
+            query_templ = Template(query_templ_str)
+            created_str = '\'' + str(created) + '\''
+            print('Created String is %s'%created_str)
+            querystr = query_templ.substitute({'issue_types': issuetypes,
+            'created_date': created_str})
             print("Executing " + querystr + " for " + project)
             issues = p.get_issues_for_query(max_rows=max_rows, query=querystr)
             logging.info("Collected # " + str(len(issues)) + " issues.")
@@ -118,13 +128,14 @@ def main():
                 ]
             print(*header, sep='\t', file=of)
             for i in issues:
-                print(i.key,
-                        i.fields.issuetype,
-                        i.fields.status,
-                        i.fields.priority,
-                        i.fields.created,
-                        i.fields.updated,
-                        i.fields.customfield_13000, sep="\t", file=of)
+                print(*i, sep="\t", file=of)
+                # print(i.key,
+                #         i.fields.issuetype,
+                #         i.fields.status,
+                #         i.fields.priority,
+                #         i.fields.created,
+                #         i.fields.updated,
+                #         i.fields.customfield_13000, sep="\t", file=of)
 
             if (output_file is not None):
                 of.close()
