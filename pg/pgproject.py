@@ -25,6 +25,7 @@
 
 import yaml
 import psycopg2
+from string import Template
 
 class PGProject:
     key = None
@@ -40,10 +41,19 @@ class PGProject:
         if self.pgconn is None:
             Exception("None PGConn passed, irrelevant connection context!")
 
-    def search_issues(self, qry):
+    def search_issues(self, qry, lbind_vars=None):
+        print("PGProject.search_issues() - Query is %s" % qry)
+        project_key = self.key
         try:
             cur = self.pgconn.cursor()
-            cur.execute(qry)
+            if lbind_vars is None:
+                # bind variables are null, project key is required
+                cur.execute(qry, project_key)
+            else:
+                # Insert the project key in the begining
+                lbind_vars = lbind_vars.insert(0, project_key)
+
+                cur.execute(qry, lbind_vars)
             results = cur.fetchall()
             cur.close()
         except psycopg2.ProgrammingError as pge:
@@ -52,7 +62,6 @@ class PGProject:
         return results
 
     def get_all_issues(self):
-        sql_str = "project_name = " + self.key
         try:
             issues = self.search_issues(sql_str)
         except Exception as e:
@@ -62,6 +71,16 @@ class PGProject:
 
     def get_issues_for_query(self, **kwargs):
         params = {}
+        query = """SELECT JIRA_ISSUE_KEY, ISSUE_TYPE, ISSUE_STATUS,
+        PRIORITY, CREATED_ON, UPDATED_DATE, CLOSED_DATE FROM +
+        PUBLIC.REPORT_ALL WHERE PROJECT_NAME = $project_key"""
+
+        query_stub = """SELECT JIRA_ISSUE_KEY,
+        ISSUE_TYPE, ISSUE_STATUS,
+        PRIORITY, CREATED_ON, UPDATED_DATE, CLOSED_DATE FROM
+        PUBLIC.REPORT_ALL WHERE PROJECT_NAME = $project_key
+        AND """
+
         for key, value in kwargs.items():
             params[key] = value
 
@@ -72,14 +91,13 @@ class PGProject:
             max_rows = params["max_rows"] # The max rows which is provided
 
         if params.get("query", None) is not None:
-            sql_str = 'SELECT JIRA_ISSUE_KEY, ISSUE_TYPE, ISSUE_STATUS,\
-            PRIORITY, CREATED_ON, UPDATED_DATE, CLOSED_DATE FROM \
-            PUBLIC.REPORT_ALL WHERE '+ "project_name = " + "'" + \
-            self.key + "'" + " AND " + params["query"]
+            print("PGProject.get_issues_for_query() adding %s to query string"% params["query"])
+            sql_str = query_stub + params["query"]
         else:
-            sql_str = 'SELECT JIRA_ISSUE_KEY, ISSUE_TYPE, ISSUE_STATUS,\
-            PRIORITY, CREATED_ON, UPDATED_DATE, CLOSED_DATE FROM \
-            PUBLIC.REPORT_ALL WHERE '+ "project_name = " + self.key
+            sql_str = query
+
+        query_templ = Template(sql_str)
+        sql_str = query_templ.substitute({'project_key':'\''+self.key+'\''})
 
         print("Executing \"" + sql_str + "\"")
         results = list()
