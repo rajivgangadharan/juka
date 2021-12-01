@@ -1,38 +1,52 @@
-#---
+---
 #OP:
 #   WorkItems_AUG2020:
 #      created: "2020/08/01" 
 #      issuetypes: 
 #        - Epic
 #        - Story
-#      outputfile: ../mtrxbook-minimal/opics_delivery.csv
+#      outputfile: ../mtrxbook-minimal/inst/extdata/opics_delivery.csv
 #   Defects_AUG2020:
 #      created: "2020/08/01" 
 #      issuetypes: 
 #        - Defect
-#      outputfile: ../mtrxbook-minimal/opics_defects.csv
+#      outputfile: ../mtrxbook-minimal/inst/extdata/opics_defects.csv
 #MPSSC:
-#   WorkItems_AUG2020:
-#      created: "2020/08/01" 
-#      issuetypes: 
-#        - Epic
-#        - Story
-#      outputfile: ../mtrxbook-minimal/inst/extdata/fcc_delivery.csv
+#  WorkItems_AUG2020:
+#     created: "2020/08/01" 
+#     issuetypes: 
+#       - Epic
+#       - Story
+#     outputfile: ../mtrxbook-minimal/inst/extdata/fcc_delivery.csv
 #MPS:
-#   Defects_AUG2020:
-#      created: "2020/08/01" 
-#      issuetypes: 
-#        - Defect
-#      outputfile: ../mtrxbook-minimal/inst/extdata/fcc_defects.csv
+#  Defects_AUG2020:
+#     created: "2020/08/01" 
+#     issuetypes: 
+#       - Defect
+#     outputfile: ../mtrxbook-minimal/inst/extdata/fcc_defects.csv
 LIQ:
-#   WorkItems_AUG2020:
-#      created: "2020/08/01" 
-#      issuetypes: 
-#        - Epic
-#        - Story
-#      outputfile: ../mtrxbook-minimal/inst/extdata/liq_delivery.csv
-   Defects_AUG2020:
-      created: "2020/08/01" 
-      issuetypes: 
-        - Defect
-      outputfile: ../mtrxbook-minimal/inst/extdata/liq_defects.csv
+  WorkItems_AUG2020:
+     created: "2020/08/01" 
+     issuetypes: 
+       - Epic
+       - Story
+     outputfile: ../mtrxbook-minimal/inst/extdata/liq_delivery.csv
+  Defects_AUG2020:
+     created: "2020/08/01" 
+     issuetypes: 
+       - Defect
+     outputfile: ../mtrxbook-minimal/inst/extdata/liq_defects.csv
+  WorkItems_Custom_Delivery_AUG2020:
+     created: "2020/08/01" 
+     issuetypes: 
+       - Epic
+       - Story
+     filter: issuekey in childIssuesOf(LIQ-129440)
+     outputfile: ../mtrxbook-minimal/inst/extdata/liq_custom_delivery.csv
+  WorkItems_Custom_Defects_AUG2020:
+     created: "2020/08/01" 
+     issuetypes: 
+       - Epic
+       - Story
+     filter: issuekey in childIssuesOf(LIQ-129440)
+     outputfile: ../mtrxbook-minimal/inst/extdata/liq_custom_defects.csv

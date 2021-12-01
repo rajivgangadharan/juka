@@ -23,10 +23,53 @@
 #
 # Module Jira Utilities for Maintaining Data. Rajiv Gangadharan (Sep.2017)
 
+from io import FileIO
 from utils import JiraConn, ConfigFile
 from project import Project
-import sys,yaml,logging
+import sys, yaml, logging
 import argparse
+from io import FileIO
+
+
+def print_issues(issues, of):
+    assert(issues != None)
+    assert(of != None)
+    header = [
+        "Key",
+        "Type",
+        "Status",
+        "Priority",
+        "Created",
+        "Updated",
+        "Closed"
+    ]
+    print(*header, sep='\t', file=of)
+    for i in issues:
+        print(i.key,
+            i.fields.issuetype,
+            i.fields.status,
+            i.fields.priority,
+            i.fields.created,
+            i.fields.updated,
+            i.fields.customfield_13000, 
+            sep="\t", file=of)
+
+def construct_query_string(config, project, query):
+    created = config[project][query]['created']
+    types = config[project][query]['issuetypes']
+    output_file = config[project][query]['outputfile']
+    issuetypes = ', '.join(types)
+    if 'filter' in config[project][query]:
+        filter = config[project][query]['filter']
+        querystr = 'Type in (' + issuetypes + ') AND createdDate >= ' +\
+        "\"" + created + "\" AND " + filter
+    else: 
+        querystr = 'Type in (' + issuetypes + ') AND createdDate >= ' +\
+                "\"" + created + "\""               
+    
+    return querystr
+    
+    
 
 def main():
     username = password = server = None
@@ -41,18 +84,27 @@ def main():
         logging.error("Config File does not exist." + e.strerror)
         exit(1)
 
-    parser = argparse.ArgumentParser(prog='fetchdataset',
-            description="Assembling a dataset for delivery insights")
-    parser.add_argument("--batch-size", help='Batch size for Jira fetch', required=False, default=25)
-    parser.add_argument("--max-rows", help='Arrest the number of rows processed', required=False, default=1000)
-    parser.add_argument("--config", help='Config file (default: fetchdataset.yaml)', required=False, default="fetchdataset.yaml")
-    parser.add_argument("--log-level", help="Set your log level.", required=False, default="CRITICAL")
+    parser = argparse.ArgumentParser(
+        prog='fetchdataset',
+        description="Assembling a dataset for delivery insights")
+    parser.add_argument("--batch-size", 
+                        help='Batch size for Jira fetch', 
+                        required=False, default=25)
+    parser.add_argument("--max-rows", 
+                        help='Arrest the number of rows processed', 
+                        required=False, default=1000)
+    parser.add_argument("--config", 
+                        help='Config file (default: fetchdataset.yaml)',
+                        required=False, default="fetchdataset.yaml")
+    parser.add_argument("--log-level", help="Set your log level.", 
+                        required=False, default="INFO")
     args = parser.parse_args()
     max_rows = int(args.max_rows)
     batch_size = int(args.batch_size)
     run_config_file = args.config
+    
+    # Set up logging
     loglevel = args.log_level
-
     numeric_log_level = getattr(logging, loglevel.upper())
     if (not isinstance(numeric_log_level, int)):
         raise ValueError("Invalid numeric_log_level : %s" % numeric_log_level)
@@ -72,23 +124,22 @@ def main():
         with open(run_config_file, 'r') as file:
             dsconfig = yaml.safe_load(file)
     except FileNotFoundError as e:
-        print("Error, yaml configurator absent, does file exist?"+ e)
+        print("Error, yaml configurator absent, does file exist?", e)
         exit(200)
     except Exception as e:
-        print("Exception occured " + e)
+        print("Exception occured " , e)
         exit(201)
 
     for project in dsconfig:
-        if (project is None):
-            raise Exception("Project is None, check yaml file")
         p = Project(jc.jira, project)
         for query in dsconfig[project].keys():
-            created = dsconfig[project][query]['created']
-            types = dsconfig[project][query]['issuetypes']
-            output_file = dsconfig[project][query]['outputfile']
-            issuetypes = ', '.join(types)
-            querystr = 'Type in (' + issuetypes + ') AND createdDate >= ' +\
-                "\"" + created + "\""
+            querystr = construct_query_string(dsconfig, project, query)
+            # created = dsconfig[project][query]['created']
+            # types = dsconfig[project][query]['issuetypes']
+            
+            # issuetypes = ', '.join(types)
+            # querystr = 'Type in (' + issuetypes + ') AND createdDate >= ' +\
+            #     "\"" + created + "\""
             print("Executing " + querystr + " for " + project)
             issues = p.get_issues_for_query(max_rows=max_rows,
                 query=querystr,
@@ -97,37 +148,16 @@ def main():
         
             # Check if output file can be successfully opened
             # Opening output file
+            output_file = dsconfig[project][query]['outputfile']
             if (output_file is not None):
                     try:
-                        of = open(output_file, "w")
-                    except OSError as oe:
-                        print("Error opening file - errno {} message {}",  oe.errno, oe.strerror)
-                        of.close()
-                        sys.exit(oe.errno)
-
-            # Write the header
-            header = [
-                    "Key",
-                    "Type",
-                    "Status",
-                    "Priority",
-                    "Created",
-                    "Updated",
-                    "Closed"
-                ]
-            print(*header, sep='\t', file=of)
-            for i in issues:
-                print(i.key,
-                        i.fields.issuetype,
-                        i.fields.status,
-                        i.fields.priority,
-                        i.fields.created,
-                        i.fields.updated,
-                        i.fields.customfield_13000, sep="\t", file=of)
-
-            if (output_file is not None):
-                of.close()
-                logging.info("Wrote data file ", output_file)
+                        with open(output_file, "w") as of:
+                            print_issues(issues, of)  
+                            logging.info("Wrote data file.")               
+                    except Exception as e:
+                        logging.info("Exception while opening file")
+                        sys.exit(1)
+                
         ######################################################################
 if __name__ == '__main__':
     main()
