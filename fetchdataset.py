@@ -31,7 +31,7 @@ import argparse
 from io import FileIO
 
 
-def print_issues(issues, of):
+def print_issues_to_file(issues, of):
     assert(issues != None)
     assert(of != None)
     header = [
@@ -67,9 +67,7 @@ def construct_query_string(config, project, query):
         querystr = 'Type in (' + issuetypes + ') AND createdDate >= ' +\
                 "\"" + created + "\""               
     
-    return querystr
-    
-    
+    return querystr     
 
 def main():
     username = password = server = None
@@ -89,10 +87,10 @@ def main():
         description="Assembling a dataset for delivery insights")
     parser.add_argument("--batch-size", 
                         help='Batch size for Jira fetch', 
-                        required=False, default=25)
+                        required=False, default=100)
     parser.add_argument("--max-rows", 
                         help='Arrest the number of rows processed', 
-                        required=False, default=1000)
+                        required=False, default=3000)
     parser.add_argument("--config", 
                         help='Config file (default: fetchdataset.yaml)',
                         required=False, default="fetchdataset.yaml")
@@ -152,12 +150,11 @@ def main():
             if (output_file is not None):
                     try:
                         with open(output_file, "w") as of:
-                            print_issues(issues, of)  
+                            print_issues_to_file(issues, of)  
                             logging.info("Wrote data file.")               
                     except Exception as e:
                         logging.info("Exception while opening file")
                         sys.exit(1)
                 
-        ######################################################################
 if __name__ == '__main__':
     main()
