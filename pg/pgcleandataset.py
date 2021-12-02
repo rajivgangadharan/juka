@@ -77,10 +77,10 @@ def main():
             dsconfig = yaml.safe_load(file)
             print(dsconfig)
     except FileNotFoundError as e:
-        print("Error, yaml configurator absent, does file exist?"+ e)
+        print("Error, yaml configurator absent, does file exist?", e)
         exit(200)
     except Exception as e:
-        print("Exception occured " + e)
+        print("Exception occured ", e)
         exit(201)
 
     for project in dsconfig:
