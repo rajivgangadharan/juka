@@ -53,6 +53,9 @@ def print_issues_to_file(issues, of):
             i.fields.updated,
             i.fields.customfield_13000, 
             sep="\t", file=of)
+        
+
+
 
 def construct_query_string(config, project, query):
     created = config[project][query]['created']
@@ -113,10 +116,10 @@ def main():
                         datefmt="%Y:%m:%d %H:%M:%S")
         
 
-    # Connect to jira
-    jc = JiraConn(username, password, server)
-    assert(jc != None)
-
+    # Connect 
+    con = JiraConn(username, password, server).jira # jira conection
+    assert(con != None)
+    
     try:
         print("YAML configurator not provided,  defaulting to fetchdataset.yaml.")
         with open(run_config_file, 'r') as file:
@@ -129,17 +132,12 @@ def main():
         exit(201)
 
     for project in dsconfig:
-        p = Project(jc.jira, project)
+        p = Project(con, project)
         for query in dsconfig[project].keys():
             querystr = construct_query_string(dsconfig, project, query)
-            # created = dsconfig[project][query]['created']
-            # types = dsconfig[project][query]['issuetypes']
-            
-            # issuetypes = ', '.join(types)
-            # querystr = 'Type in (' + issuetypes + ') AND createdDate >= ' +\
-            #     "\"" + created + "\""
             print("Executing " + querystr + " for " + project)
-            issues = p.get_issues_for_query(max_rows=max_rows,
+            issues = p.get_issues_for_query(
+                max_rows=max_rows,
                 query=querystr,
                 block_size=batch_size)
             logging.info("Collected # " + str(len(issues)) + " issues.")
