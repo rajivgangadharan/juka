@@ -52,10 +52,7 @@ def print_issues_to_file(issues, of):
             i.fields.created,
             i.fields.updated,
             i.fields.customfield_13000, 
-            sep="\t", file=of)
-        
-
-
+            sep="\t", file=of)   
 
 def construct_query_string(config, project, query):
     created = config[project][query]['created']
