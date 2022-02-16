@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-#  listissues.py
+#  fetchdataset.py
 #
 #  Copyright 2017 Rajiv Gangadharan <rajiv.gangadharan@gmail.com>
 #

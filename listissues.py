@@ -56,8 +56,7 @@ def main():
         try:
             of = open(output_file, "w")
         except OSError as oe:
-            print("Error while opening file for writing - errno {} message {}",
-                oe.errno, oe.strerror)
+            print(f'Error opening file for writing, {oe.errno} {oe.strerror}')
             sys.exit(oe.errno)
     
     # Connect to jira
