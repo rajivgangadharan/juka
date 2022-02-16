@@ -3,22 +3,26 @@
 # Purpose to schedule the data pull using cron
 
 . ./pgfetchdatasets.env
-BASE_DIR=/disks/app/juka/pg
-LOCK_FILE=${BASE_DIR}/.pgfetchdataset.lock
-LOG_FILE=${BASE_DIR}/pgfetchdataset.lastrun.log
+BASE_DIR="${BASE_DIR}"
+LOCK_FILE="${BASE_DIR}/.pgfetchdataset.lock"
+LOG_FILE="${BASE_DIR}/pgfetchdataset.lastrun.log"
 if [ -f ./pgfetchdatasets.env ]; then
         . ./pgfetchdatasets.env
 else
-        . ${BASE_DIR}/.pgfetchdatasets.env
+        . "${BASE_DIR}/.pgfetchdatasets.env"
 fi
 
 
-if [ -f ${LOCK_FILE} ]; then
+if [ -f "${LOCK_FILE}" ]; then
         echo "Lock file exists, the last run did not finish. exiting."
         exit 100
 else
-        touch $LOCK_FILE
-        python3 ${BASE_DIR}/pgfetchdataset.py --config ${BASE_DIR}/pgfetchdataset.yaml > ${LOG_FILE} 2>&1
-        cat ${LOG_FILE}
-        rm -f $LOCK_FILE
+        touch "${LOCK_FILE}"
+        if [ $? -ne 0 ]; then
+                echo "Error locking this execution. Exiting..."
+                exit 1
+        fi
+        python "${BASE_DIR}/pgfetchdataset.py" --config "${BASE_DIR}/pgfetchdataset.yaml" > "${LOG_FILE}" 2>&1
+        cat "${LOG_FILE}"
+        rm -f "${LOCK_FILE}"
 fi

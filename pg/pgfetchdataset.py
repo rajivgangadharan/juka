@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  listissues.py
+#  pgfetchdataset.py
 #
 #  Copyright 2017 Rajiv Gangadharan <rajiv.gangadharan@gmail.com>
 #
@@ -77,10 +77,10 @@ def main():
             dsconfig = yaml.safe_load(file)
             print(dsconfig)
     except FileNotFoundError as e:
-        print("Error, yaml configurator absent, does file exist?"+ e)
+        print(f'Error, yaml configurator absent, does file exist? {e}')
         exit(200)
     except Exception as e:
-        print("Exception occured " + e)
+        print("Exception occured. ", e)
         exit(201)
 
     for project in dsconfig:
@@ -120,7 +120,8 @@ def main():
                     "Priority",
                     "Created",
                     "Updated",
-                    "Closed"
+                    "Closed",
+                    "Origin"
                 ]
             print(*header, sep='\t', file=of)
             for i in issues:
