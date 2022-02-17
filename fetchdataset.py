@@ -30,7 +30,31 @@ from project import Project
 import sys, yaml, logging
 import argparse
 from io import FileIO
+import re
+from typing import List, Any, Union
 
+
+def get_categories(test_str: str) -> List[str]:
+    glist = list()
+    regex = r"value=\'([A-Za-z ]*)\',"
+
+    try:
+        matches = re.finditer(regex, test_str, re.MULTILINE)
+        for matchNum, match in enumerate(matches, start=1):
+            print("Match {matchNum} was found at {start}-{end}: {match}".
+                  format(matchNum=matchNum, start=match.start(),
+                         end=match.end(), match=match.group()))
+            for groupNum in range(0, len(match.groups())):
+                groupNum = groupNum + 1
+                glist.append(match.group(groupNum))
+                print("Group {groupNum} found at {start}-{end}: {group}".
+                      format(groupNum=groupNum, start=match.start(groupNum),
+                             end=match.end(groupNum), group=match.group(groupNum)))
+    except Exception as e:
+        print(f"Exception caught while regex operations, {str(e)}")
+        raise
+
+    return glist
 
 def print_issues_to_file(issues:List, of) -> None:
     assert(issues != None)
@@ -53,8 +77,14 @@ def print_issues_to_file(issues:List, of) -> None:
     ]
 
     print(*header, sep='\t', file=of)
+
     for i in issues:
         try:
+            categories = get_categories(
+                str(i.fields.customfield_13065)) if (# Category
+                    hasattr(i.fields, 'customfield_13065')
+                ) else None
+            category = categories.pop() if len(categories) > 0 else None
             fields = [
                 i.key,
                 i.fields.issuetype,
@@ -67,7 +97,7 @@ def print_issues_to_file(issues:List, of) -> None:
                     hasattr(i.fields,'customfield_13405')) else None,
                 i.fields.customfield_10110 if ( # Source
                     hasattr(i.fields, 'customfield_10110')) else None,
-                i.fields.customfield_13065 if ( # Category
+                category if ( # Category
                     hasattr(i.fields, 'customfield_13065')) else None,
                 i.fields.customfield_10200 if (  # Severity
                     hasattr(i.fields, 'customfield_10200')) else None,
@@ -76,16 +106,16 @@ def print_issues_to_file(issues:List, of) -> None:
                 i.fields.resolution if (  # Resolution
                     hasattr(i.fields, 'resolution')) else None,
             ]
-            print(*fields, sep="\t", file=of)
-            print(*fields, sep="\t")   
+            print(*fields, sep="\t", file=of) 
+            print(*fields, sep="\t")
         except AttributeError as ae:
-            print(f"Caught missing attribute exception, {str(ae)}")
+            print(f"Exception caught, missing attribute, {str(ae)}")
             raise
         except UnboundLocalError as ule:
-            print(f"Caught unbound local error, {str(ule)}")
+            print(f"Exception caught, unbound local error, {str(ule)}")
             raise
         except Exception as e:
-            print(f"Exception caught {str(e)}")
+            print(f"Exception caught, {str(e)}")
             raise
     print(f'print_issues_to_file() - done.')
 
