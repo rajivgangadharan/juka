@@ -41,7 +41,8 @@ def print_issues_to_file(issues, of):
         "Priority",
         "Created",
         "Updated",
-        "Closed"
+        "Closed",
+        "Origin"
     ]
     print(*header, sep='\t', file=of)
     for i in issues:
@@ -52,6 +53,7 @@ def print_issues_to_file(issues, of):
             i.fields.created,
             i.fields.updated,
             i.fields.customfield_13000, 
+            i.fields.customfield_13405,
             sep="\t", file=of)   
 
 def construct_query_string(config, project, query):
