@@ -24,6 +24,7 @@
 # Module Jira Utilities for Maintaining Data. Rajiv Gangadharan (Sep.2017)
 
 from io import FileIO
+from typing import List
 from utils import JiraConn, ConfigFile
 from project import Project
 import sys, yaml, logging
@@ -31,9 +32,10 @@ import argparse
 from io import FileIO
 
 
-def print_issues_to_file(issues, of):
+def print_issues_to_file(issues:List, of) -> None:
     assert(issues != None)
     assert(of != None)
+    print(f'print_issues_to_file() - writing {len(issues)} issues to file')
     header = [
         "Key",
         "Type",
@@ -42,19 +44,50 @@ def print_issues_to_file(issues, of):
         "Created",
         "Updated",
         "Closed",
-        "Origin"
+        "Origin", 
+        "Source",
+        "Category",
+        "Severity",
+        "Verified",
+        "Resolution"
     ]
+
     print(*header, sep='\t', file=of)
     for i in issues:
-        print(i.key,
-            i.fields.issuetype,
-            i.fields.status,
-            i.fields.priority,
-            i.fields.created,
-            i.fields.updated,
-            i.fields.customfield_13000, 
-            i.fields.customfield_13405,
-            sep="\t", file=of)   
+        try:
+            fields = [
+                i.key,
+                i.fields.issuetype,
+                i.fields.status,
+                i.fields.priority,
+                i.fields.created,
+                i.fields.updated,
+                i.fields.customfield_13000,
+                i.fields.customfield_13405 if ( # Origin
+                    hasattr(i.fields,'customfield_13405')) else None,
+                i.fields.customfield_10110 if ( # Source
+                    hasattr(i.fields, 'customfield_10110')) else None,
+                i.fields.customfield_13065 if ( # Category
+                    hasattr(i.fields, 'customfield_13065')) else None,
+                i.fields.customfield_10200 if (  # Severity
+                    hasattr(i.fields, 'customfield_10200')) else None,
+                i.fields.customfield_10128 if (  # Verified Date
+                    hasattr(i.fields, 'customfield_10128')) else None,
+                i.fields.resolution if (  # Resolution
+                    hasattr(i.fields, 'resolution')) else None,
+            ]
+            print(*fields, sep="\t", file=of)
+            print(*fields, sep="\t")   
+        except AttributeError as ae:
+            print(f"Caught missing attribute exception, {str(ae)}")
+            raise
+        except UnboundLocalError as ule:
+            print(f"Caught unbound local error, {str(ule)}")
+            raise
+        except Exception as e:
+            print(f"Exception caught {str(e)}")
+            raise
+    print(f'print_issues_to_file() - done.')
 
 def construct_query_string(config, project, query):
     created = config[project][query]['created']
@@ -123,6 +156,7 @@ def main():
         print("YAML configurator not provided,  defaulting to fetchdataset.yaml.")
         with open(run_config_file, 'r') as file:
             dsconfig = yaml.safe_load(file)
+        print(dsconfig)
     except FileNotFoundError as e:
         print("Error, yaml configurator absent, does file exist?", e)
         exit(200)
@@ -134,7 +168,7 @@ def main():
         p = Project(con, project)
         for query in dsconfig[project].keys():
             querystr = construct_query_string(dsconfig, project, query)
-            print("Executing " + querystr + " for " + project)
+            print(f'Executing {querystr} for {project}')
             issues = p.get_issues_for_query(
                 max_rows=max_rows,
                 query=querystr,
@@ -146,9 +180,10 @@ def main():
             output_file = dsconfig[project][query]['outputfile']
             if (output_file is not None):
                     try:
+                        print(f'Opening {output_file} for writing')
                         with open(output_file, "w") as of:
                             print_issues_to_file(issues, of)  
-                            logging.info("Wrote data file.")               
+                        logging.info("Wrote data file.")               
                     except Exception as e:
                         logging.info("Exception while opening file")
                         sys.exit(1)

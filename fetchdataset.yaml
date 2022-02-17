@@ -10,6 +10,7 @@ OP:
       created: "2020/08/01" 
       issuetypes: 
         - Defect
+        - Backport
       outputfile: ../mtrxbook-minimal/inst/extdata/opics_defects.csv
 #MPSSC:
 #  WorkItems_AUG2020:
