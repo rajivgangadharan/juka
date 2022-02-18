@@ -5,5 +5,4 @@ if [ $? -ne 0 ]; then
   exit 1
 else
   echo "$0 - successful"
-if
-
+fi
