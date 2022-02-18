@@ -1,4 +1,4 @@
-coding=utf8
+# coding=utf8
 # the above tag defines encoding for this document and is for Python 2.x compatibility
 import re
 regex = r"[0-9] - "

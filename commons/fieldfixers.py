@@ -24,6 +24,7 @@
 # Module commons.fieldfixers to fix fields using regex. 
 # Rajiv Gangadharan (Feb.2022)
 
+from ast import Str
 import re
 from typing import List, Any, Union
 
@@ -49,3 +50,12 @@ def fix_categories(test_str: str) -> List[str]:
         raise
 
     return glist
+
+
+def strip_numerical_from_severity(test_str) -> Str:
+    regex = r"[0-9] - "
+    #test_str = "3 - Medium"
+
+    subst = ""
+    result = re.sub(regex, subst, test_str, 0, re.MULTILINE)
+    return result # Returns the severity with the number and hypen stripped
