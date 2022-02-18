@@ -59,10 +59,16 @@ def print_issues_to_file(issues:List, of) -> None:
     for i in issues:
         try:
             categories = commons.fieldfixers.fix_categories(
-                str(i.fields.customfield_13065)) if (# Category
+                    str(i.fields.customfield_13065)
+                ) if ( # Category
                     hasattr(i.fields, 'customfield_13065')
                 ) else None
             category = categories.pop() if len(categories) > 0 else None
+            severity = commons.fieldfixers.strip_numerical_from_severity(
+                    str(i.fields.customfield_10200)
+                ) if ( #Severity 
+                    hasattr(i.fields,'customfield_10200')
+                ) else None
             fields = [
                 i.key,
                 i.fields.issuetype,
@@ -77,8 +83,7 @@ def print_issues_to_file(issues:List, of) -> None:
                     hasattr(i.fields, 'customfield_10110')) else None,
                 category if ( # Category
                     hasattr(i.fields, 'customfield_13065')) else None,
-                i.fields.customfield_10200 if (  # Severity
-                    hasattr(i.fields, 'customfield_10200')) else None,
+                severity, # Severity without the numerical part.
                 i.fields.customfield_10128 if (  # Verified Date
                     hasattr(i.fields, 'customfield_10128')) else None,
                 i.fields.resolution if (  # Resolution
