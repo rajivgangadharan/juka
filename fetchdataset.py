@@ -32,29 +32,7 @@ import argparse
 from io import FileIO
 import re
 from typing import List, Any, Union
-
-
-def get_categories(test_str: str) -> List[str]:
-    glist = list()
-    regex = r"value=\'([A-Za-z ]*)\',"
-
-    try:
-        matches = re.finditer(regex, test_str, re.MULTILINE)
-        for matchNum, match in enumerate(matches, start=1):
-            print("Match {matchNum} was found at {start}-{end}: {match}".
-                  format(matchNum=matchNum, start=match.start(),
-                         end=match.end(), match=match.group()))
-            for groupNum in range(0, len(match.groups())):
-                groupNum = groupNum + 1
-                glist.append(match.group(groupNum))
-                print("Group {groupNum} found at {start}-{end}: {group}".
-                      format(groupNum=groupNum, start=match.start(groupNum),
-                             end=match.end(groupNum), group=match.group(groupNum)))
-    except Exception as e:
-        print(f"Exception caught while regex operations, {str(e)}")
-        raise
-
-    return glist
+import commons.fieldfixers
 
 def print_issues_to_file(issues:List, of) -> None:
     assert(issues != None)
@@ -80,7 +58,7 @@ def print_issues_to_file(issues:List, of) -> None:
 
     for i in issues:
         try:
-            categories = get_categories(
+            categories = commons.fieldfixers.fix_categories(
                 str(i.fields.customfield_13065)) if (# Category
                     hasattr(i.fields, 'customfield_13065')
                 ) else None
