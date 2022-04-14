@@ -37,3 +37,16 @@ Loan IQ:
     issuetypes:
        - Defect
     outputfile: ../../mtrxbook-minimal/inst/extdata/liq_defects.csv
+GPP:
+  WorkItems_JAN2021:
+    created: 2021-01-01
+    issuetypes:
+       - Epic
+       - Story
+    outputfile: ../../mtrxbook-minimal/inst/extdata/gpp_delivery.csv
+GPP Defects:
+  WorkItems_JAN2021:
+    created: 2021-01-01
+    issuetypes:
+       - Defect
+    outputfile: ../../mtrxbook-minimal/inst/extdata/gpp_defects.csv
