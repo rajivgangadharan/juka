@@ -23,14 +23,22 @@
 #
 # Module Jira Utilities for Maintaining Data. Rajiv Gangadharan (Sep.2017)
 
+from ast import Str
+from typing import List
+from venv import create
 import yaml
 import psycopg2
 from string import Template
+from pgquery import PGQuery
+from queries import Queries
 
 class PGProject:
     key = None
     project = None
     pgconn = None
+    issue_types = None
+    query_template = None
+    query = None
 
     def __init__(self, pgconn, project_string):
         if pgconn is None:
@@ -40,69 +48,43 @@ class PGProject:
         self.pgconn = pgconn
         if self.pgconn is None:
             Exception("None PGConn passed, irrelevant connection context!")
+        self.query_template = Queries.query_template
+        projects_str = "\'" + project_string + "\'"
+        self.query = Template(self.query_template).substitute({'projects': projects_str})
+    
+    # Adds additional parameters to query (if any) and then executes it.
+    def get_issues_for_query(self, issue_types: List, created_date, **kwargs):
 
-    def search_issues(self, qry, lbind_vars=None):
-        print("PGProject.search_issues() - Query is %s" % qry)
-        project_key = self.key
-        try:
-            cur = self.pgconn.cursor()
-            if lbind_vars is None:
-                # bind variables are null, project key is required
-                cur.execute(qry, project_key)
-            else:
-                # Insert the project key in the begining
-                lbind_vars = lbind_vars.insert(0, project_key)
+        issue_types_str = ', '.join("\'" + t + "\'"  for t in issue_types)
+        qry = self.query + " AND ISSUE_TYPE IN ( $issue_types )"
+        qry = qry + " AND CREATED_ON > '$created_date' "
+        qry = Template(qry).substitute({'issue_types': issue_types_str, 'created_date': created_date})
 
-                cur.execute(qry, lbind_vars)
-            results = cur.fetchall()
-            cur.close()
-        except psycopg2.ProgrammingError as pge:
-            print("search_issues(): Exception - %s" % (pge.pgerror))
-            raise
-        return results
-
-    def get_all_issues(self):
-        try:
-            issues = self.search_issues(sql_str)
-        except Exception as e:
-            print("get_all_issues(): Exception - %s" % (e))
-            raise
-        return issues
-
-    def get_issues_for_query(self, **kwargs):
+        # Processing special parameters like max_rows
         params = {}
-        query = """SELECT JIRA_ISSUE_KEY, ISSUE_TYPE, ISSUE_STATUS,
-        PRIORITY, CREATED_ON, UPDATED_DATE, CLOSED_DATE, DEFECT_ORIGIN FROM
-        PUBLIC.REPORT_ALL WHERE PROJECT_NAME = $project_key"""
-
-        query_stub = """SELECT JIRA_ISSUE_KEY,
-        ISSUE_TYPE, ISSUE_STATUS,
-        PRIORITY, CREATED_ON, UPDATED_DATE, CLOSED_DATE, DEFECT_ORIGIN FROM
-        PUBLIC.REPORT_ALL WHERE PROJECT_NAME = $project_key
-        AND """
-
         for key, value in kwargs.items():
             params[key] = value
 
         max_rows = 0
         if "max_rows" not in params.keys():
-            max_rows = 5000 # the default
+            max_rows = 25000 # the default
         else:
             max_rows = params["max_rows"] # The max rows which is provided
 
+
         if params.get("query", None) is not None:
-            print("PGProject.get_issues_for_query() adding %s to query string"% params["query"])
-            sql_str = query_stub + params["query"]
-        else:
-            sql_str = query
+            print("PGSolution.get_issues_for_query() adding %s to query string"% params["query"])
+            qry = qry + " AND " + params["query"]
+        
+        # Set the LIMIT Here
+        qry = qry + " LIMIT  " + str(max_rows)
+        # LIMIT setting ending 
 
-        query_templ = Template(sql_str)
-        sql_str = query_templ.substitute({'project_key':'\''+self.key+'\''})
-
-        print("Executing \"" + sql_str + "\"")
+        print("Executing \"" + qry + "\" calling search_issues")
         results = list()
         try:
-            results = self.search_issues(sql_str)
+            pgqry = PGQuery(self.pgconn, qry = qry)
+            results = pgqry.search_issues()
         except psycopg2.DatabaseError as dbe:
             print("Caught error %s" % (dbe.pgerror))
             raise
@@ -110,7 +92,9 @@ class PGProject:
             print("Caught error %s" % (dbe.pgerror))
             raise
         except Exception as e:
-            print("Exception %s" % e)
+            print("Exception %s" % (e))
             exit(1)
         print("Returning %d rows" % (len(results)))
         return results
+
+   

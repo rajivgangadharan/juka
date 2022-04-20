@@ -34,24 +34,14 @@ import yaml
 import psycopg2
 from string import Template
 from pgquery import PGQuery
+from queries import Queries
 
 class PGSolution:
     key = None
     projects = None
     pgconn = None
     issue_types = None
-    query_template = """SELECT 
-        JIRA_ISSUE_KEY, 
-        ISSUE_TYPE, 
-        ISSUE_STATUS,
-        PRIORITY, 
-        CREATED_ON, 
-        UPDATED_DATE, 
-        CLOSED_DATE, 
-        DEFECT_ORIGIN 
-    FROM
-        PUBLIC.REPORT_ALL WHERE 
-    PROJECT_NAME in ( $projects )"""
+    query_template = None
     query = None
 
     def __init__(self, pgconn, solution, projects: List):
@@ -60,6 +50,7 @@ class PGSolution:
         self.key = solution
         self.projects = projects
         self.pgconn = pgconn
+        self.query_template = Queries.query_template
         projects_str = ', '.join( "\'" + p + "\'" for p in self.projects)
         self.query = Template(self.query_template).substitute({'projects': projects_str})
 
@@ -95,7 +86,8 @@ class PGSolution:
         print("Executing \"" + qry + "\" calling search_issues")
         results = list()
         try:
-            results = self.search_issues(qry)
+            pgqry = PGQuery(self.pgconn, qry = qry)
+            results = pgqry.search_issues()
         except psycopg2.DatabaseError as dbe:
             print("Caught error %s" % (dbe.pgerror))
             raise
@@ -108,16 +100,4 @@ class PGSolution:
         print("Returning %d rows" % (len(results)))
         return results
 
-    def search_issues(self, qry) -> List:
-        print("PGSolution.search_issues() - Query is %s" % qry)
-        try:
-            cur = self.pgconn.cursor()
-            cur.execute(qry)
-            results = cur.fetchall()
-            cur.close()
-        except psycopg2.ProgrammingError as pge:
-            print("search_issues(): Database exception - %s" % (pge.pgerror))
-            raise
-        except Exception as e:
-            print("PGSolution.search_issues(): Exception - %s" % (e))
-        return results
+

@@ -26,6 +26,7 @@ from pprint import pprint
 import sys
 from pgutils import PGConfigFile,PGConn
 from pgsolution import PGSolution
+from pgproject import PGProject
 import sys,yaml,logging
 import argparse
 import psycopg2
@@ -86,6 +87,49 @@ def main():
 
     for level in dsconfig.keys():
         print(f"Processing level {level}")
+        logging.info("####### " + level + " ########")
+        if level == 'projects':
+            for project in dsconfig[level].keys():
+                print(f"Processing project {project}")
+                if (project is None):
+                    raise Exception("Project is None, check yaml file")
+                p = PGProject(pgconn, project)
+                for query in dsconfig[level][project].keys():
+                    created = dsconfig[level][project][query]['created']
+                    types = dsconfig[level][project][query]['issuetypes']
+                    output_file = dsconfig[level][project][query]['outputfile']
+                    issues = p.get_issues_for_query(types, created, max_rows=max_rows)
+                    logging.info("Collected # " + str(len(issues)) + " issues.")
+
+                    # Check if output file can be successfully opened
+                    # Opening output file
+                    if (output_file is not None):
+                        try:
+                            of = open(output_file, "w")
+                        except OSError as oe:
+                            print(f"Error opening file - errno {oe.errorno} message {oe.strerror}")
+                            of.close()
+                            sys.exit(oe.errno)
+                                        # Write the header
+                    header = [
+                            "Key",
+                            "Type",
+                            "Status",
+                            "Priority",
+                            "Created",
+                            "Updated",
+                            "Closed",
+                            "Origin"
+                        ]
+                    print(*header, sep='\t', file=of)
+                    for i in issues:
+                        print(*i, sep="\t", file=of)
+                    if (output_file is not None):
+                        of.close()
+                        print(f"Wrote data file {output_file}")
+                        logging.info("Wrote data file ", output_file)
+
+
         if level == 'solutions':
             for solution in dsconfig[level].keys():
                 if (solution is None):
@@ -100,7 +144,7 @@ def main():
                     created = dsconfig[level][solution]['queries'][query]['created']         
                     types = dsconfig[level][solution]['queries'][query]['issuetypes']
                     output_file = dsconfig[level][solution]['queries'][query]['outputfile']
-                    print(f"From created date {created} with {types} written to {output_file}")
+                    print(f"From created date {created} with {types} writing to {output_file}")
 
                     issues = s.get_issues_for_query( \
                         issue_types=types, created_date=created, max_rows=max_rows)
@@ -109,12 +153,12 @@ def main():
                     # Check if output file can be successfully opened
                     # Opening output file
                     if (output_file is not None):
-                            try:
-                                of = open(output_file, "w")
-                            except OSError as oe:
-                                print("Error opening file - errno {} message {}",  oe.errno, oe.strerror)
-                                of.close()
-                                sys.exit(oe.errno)
+                        try:
+                            of = open(output_file, "w")
+                        except OSError as oe:
+                            print(f"Error opening file - errno {oe.errorno} message {oe.strerror}")
+                            of.close()
+                            sys.exit(oe.errno)
 
                     # Write the header
                     header = [
@@ -132,6 +176,7 @@ def main():
                         print(*i, sep="\t", file=of)
                     if (output_file is not None):
                         of.close()
+                        print(f"Wrote data file {output_file}")
                         logging.info("Wrote data file ", output_file)
 if __name__ == '__main__':
     main()
