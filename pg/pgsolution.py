@@ -37,23 +37,26 @@ from pgquery import PGQuery
 from queries import Queries
 
 class PGSolution:
-    key = None
     projects = None
     pgconn = None
     issue_types = None
     query_template = None
     query = None
+    pgquery = None
 
-    def __init__(self, pgconn, solution, projects: List):
+    def __init__(self, pgconn, projects):
         if pgconn is None:
             raise Exception("Cannot instantiate PGProject, None pgconn passed")
-        self.key = solution
-        self.projects = projects
+
+        if type(projects) == str:
+            self.projects = [projects]
+        else:
+            self.projects = projects
+
         self.pgconn = pgconn
         self.query_template = Queries.query_template
         projects_str = ', '.join( "\'" + p + "\'" for p in self.projects)
         self.query = Template(self.query_template).substitute({'projects': projects_str})
-
 
     # Adds additional parameters to query (if any) and then executes it.
     def get_issues_for_query(self, issue_types: List, created_date, **kwargs):

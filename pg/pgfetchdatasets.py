@@ -37,7 +37,7 @@ def main():
      description="Assembling a dataset from Postgres Reporting Database for delivery insights")
     parser.add_argument("--auth-config", help="YAML file with database connection parameters", default='pgconfig.yaml', required=False)
     parser.add_argument("--max-rows", help='Arrest the number of rows processed', required=False, default=25000)
-    parser.add_argument("--config", help='Config file (default: datafetch.yaml)', required=False, default="datafetch.yaml")
+    parser.add_argument("--config", help='Config file (default: pgfetchdatasets.yaml)', required=False, default="pgfetchdatasets.yaml")
     parser.add_argument("--log-level", help="Set your log level.", required=False, default="CRITICAL")
     args = parser.parse_args()
     max_rows = int(args.max_rows)
@@ -137,7 +137,7 @@ def main():
                 projects = dsconfig[level][solution]['projects']
                 print(f"Solution being processed is {solution} with ")  
                 pprint(projects)
-                s = PGSolution(pgconn, solution, projects=projects)    
+                s = PGSolution(pgconn, projects=projects)    
 
                 for query in dsconfig[level][solution]['queries'].keys():
                     print(f"Query being processed is {query}")
