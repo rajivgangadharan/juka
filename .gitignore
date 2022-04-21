@@ -15,3 +15,5 @@ site_packages
 site-packages
 lib64
 Scripts/*
+.spyproject/*
+*.log

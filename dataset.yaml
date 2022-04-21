@@ -1,7 +1,0 @@
----
-OP:
-   Epics_JAN2020:
-      created: "2020/01/01" 
-      issuetypes: 
-        - Epic
-      outputfile: ../R/OpicsDataSet_2021-06-17_Epics.csv
