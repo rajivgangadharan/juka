@@ -4,8 +4,8 @@
 
 . ./pgfetchdatasets.env
 BASE_DIR="${BASE_DIR}"
-LOCK_FILE="${BASE_DIR}/.pgfetchdataset.lock"
-LOG_FILE="${BASE_DIR}/pgfetchdataset.lastrun.log"
+LOCK_FILE="${BASE_DIR}/.pgfetchdatasets.lock"
+LOG_FILE="${BASE_DIR}/pgfetchdatasets.lastrun.log"
 if [ -f ./pgfetchdatasets.env ]; then
         . ./pgfetchdatasets.env
 else
@@ -22,7 +22,7 @@ else
                 echo "Error locking this execution. Exiting..."
                 exit 1
         fi
-        python "${BASE_DIR}/pgfetchdataset.py" --config "${BASE_DIR}/pgfetchdataset.yaml" > "${LOG_FILE}" 2>&1
+        python "${BASE_DIR}/pgfetchdatasets.py" --config "${BASE_DIR}/pgfetchdataset.yaml" > "${LOG_FILE}" 2>&1
         cat "${LOG_FILE}"
         rm -f "${LOCK_FILE}"
 fi

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-#  pgproject.py
+#  pgsolution.py
 #
 #  Copyright 2017 Rajiv Gangadharan <rajiv.gangadharan@gmail.com>
 #
@@ -22,6 +22,10 @@
 #
 #
 # Module Jira Utilities for Maintaining Data. Rajiv Gangadharan (Sep.2017)
+#
+# Purpose:
+# A solution can have multiple jira projects. The script pulls all the 
+# data from the different projects
 
 from ast import Str
 from typing import List
@@ -32,8 +36,8 @@ from string import Template
 from pgquery import PGQuery
 from queries import Queries
 
-class PGProject:
-    project = None
+class PGSolution:
+    projects = None
     pgconn = None
     issue_types = None
     query_template = None
@@ -53,7 +57,7 @@ class PGProject:
         self.query_template = Queries.query_template
         projects_str = ', '.join( "\'" + p + "\'" for p in self.projects)
         self.query = Template(self.query_template).substitute({'projects': projects_str})
-  
+
     # Adds additional parameters to query (if any) and then executes it.
     def get_issues_for_query(self, issue_types: List, created_date, **kwargs):
 
@@ -99,4 +103,4 @@ class PGProject:
         print("Returning %d rows" % (len(results)))
         return results
 
-   
+
