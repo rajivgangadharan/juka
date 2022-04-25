@@ -39,6 +39,22 @@ projects:
         - Defect
       outputfile: ../../mtrxbook-minimal/inst/extdata/liq_defects.csv
 solutions:
+  GPP:
+    projects:
+      - GPP
+      - GPP Defects
+    queries:
+      WorkItems_AUG2020:
+        created: "2020/08/01"
+        issuetypes:
+          - Epic
+          - Story
+        outputfile: ../../mtrxbook-minimal/inst/extdata/solution_gpp_delivery.csv
+      Defects_AUG2020:
+        created: "2020/08/01"
+        issuetypes:
+          - Defect
+        outputfile: ../../mtrxbook-minimal/inst/extdata/solution_gpp_defects.csv
   SUMMIT:
     projects:
       - Summit
