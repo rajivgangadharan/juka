@@ -7,7 +7,7 @@ BASE_DIR="${BASE_DIR}"
 LOCK_FILE="${BASE_DIR}/.pgfetchdatasets.lock"
 LOG_FILE="${BASE_DIR}/pgfetchdatasets.lastrun.log"
 
-if [ -f ${BASE_DIR}/../../juka-env/bin/activate ];
+if [ -f ${BASE_DIR}/../../juka-env/bin/activate ]; then
  source ${BASE_DIR}/../../juka-env/bin/activate
 else
  echo "Environment activation failed."
