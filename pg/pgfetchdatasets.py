@@ -162,10 +162,12 @@ def main():
 
                     # Write the header
                     header = [
+                            "Project",
                             "Key",
                             "Type",
                             "Status",
                             "Priority",
+                            "Severity",
                             "Created",
                             "Updated",
                             "Closed",

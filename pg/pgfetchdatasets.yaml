@@ -76,3 +76,50 @@ solutions:
         issuetypes:
           - Defect
         outputfile: ../../mtrxbook-minimal/inst/extdata/trk_defects.csv
+  ESSENCE:
+    projects:
+      - Fusion Risk 
+      - FBE Core
+      - FBE German SaaS
+      - FBE Installation and Configuration
+      - FBE Interfaces
+      - “FBE Islamic Profit Distribution“
+      - FBE Lending
+      - FBE Loan Origination
+      - FBE Payments
+      - FBE Reports Transformation
+      - FBE Teller
+      - FB Platform
+      - FB UX Modernization
+      - Islamic Banking and Finance
+      - Islamic Profit Distribution
+      - Fusion Party
+      - FBE DC Localization
+      - Digital Channels Internet Banking
+      - Digital Channels Mobile Banking
+      - Payments and Messaging
+      - Fusion Essence Security
+      - DEH – Digital Branch
+      - DEH – Foundation Services
+      - DEH – Mobile Banking
+      - DEH – Online Banking
+      - Fusion Essence Digital Engagement
+      - Fusion Essence Digital Engagement
+      - Fusion Essence Document Repository
+      - Fusion Essence Next-Gen
+      - Fusion Essence Cloud
+      - Fusion Essence Reports Application
+      - Fusion Essence Shared Data
+      - Fusion Essence Notification Framework
+    queries:
+      WorkItems_AUG2020:
+        created: "2020/08/01"
+        issuetypes:
+          - Epic
+          - Story
+        outputfile: ../../mtrxbook-minimal/inst/extdata/essence_delivery.csv
+      Defects_AUG2020:
+        created: "2020/08/01"
+        issuetypes:
+          - Defect
+        outputfile: ../../mtrxbook-minimal/inst/extdata/essence_defects.csv

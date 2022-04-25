@@ -22,7 +22,7 @@ else
                 echo "Error locking this execution. Exiting..."
                 exit 1
         fi
-        python "${BASE_DIR}/pgfetchdatasets.py" --config "${BASE_DIR}/pgfetchdataset.yaml" > "${LOG_FILE}" 2>&1
+        python "${BASE_DIR}/pgfetchdatasets.py" --config "${BASE_DIR}/pgfetchdatasets.yaml" > "${LOG_FILE}" 2>&1
         cat "${LOG_FILE}"
         rm -f "${LOCK_FILE}"
 fi
