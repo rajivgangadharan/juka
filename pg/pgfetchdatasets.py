@@ -110,12 +110,14 @@ def main():
                             print(f"Error opening file - errno {oe.errorno} message {oe.strerror}")
                             of.close()
                             sys.exit(oe.errno)
-                                        # Write the header
+                    # Write the header
                     header = [
+                            "Project",
                             "Key",
                             "Type",
                             "Status",
                             "Priority",
+                            "Severity",
                             "Created",
                             "Updated",
                             "Closed",
