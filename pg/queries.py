@@ -30,10 +30,12 @@ from typing import List
 
 class Queries:
     query_template = """SELECT 
+        PROJECT_NAME,
         JIRA_ISSUE_KEY, 
         ISSUE_TYPE, 
         ISSUE_STATUS,
         PRIORITY, 
+        SEVERITY,
         CREATED_ON, 
         UPDATED_DATE, 
         CLOSED_DATE, 
