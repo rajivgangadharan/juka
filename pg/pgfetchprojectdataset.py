@@ -114,14 +114,19 @@ def main():
 
             # Write the header
             header = [
+                    "Project",
                     "Key",
                     "Type",
                     "Status",
                     "Priority",
+                    "Severity",
                     "Created",
                     "Updated",
                     "Closed",
                     "Origin"
+                    "Reporter", 
+                    "Assignee",
+                    "Resolution"
                 ]
             print(*header, sep='\t', file=of)
             for i in issues:
@@ -131,3 +136,4 @@ def main():
                 logging.info("Wrote data file ", output_file)
 if __name__ == '__main__':
     main()
+

@@ -39,7 +39,10 @@ class Queries:
         CREATED_ON, 
         UPDATED_DATE, 
         CLOSED_DATE, 
-        DEFECT_ORIGIN 
+        DEFECT_ORIGIN,
+        REPORTER, 
+        ASSIGNEE,
+        RESOLUTION
     FROM
         PUBLIC.REPORT_ALL WHERE 
     PROJECT_NAME in ( $projects )"""

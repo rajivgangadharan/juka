@@ -102,5 +102,3 @@ class PGSolution:
             exit(1)
         print("Returning %d rows" % (len(results)))
         return results
-
-
