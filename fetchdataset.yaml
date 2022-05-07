@@ -51,16 +51,16 @@ OP:
 #       - Defect
 #     filter: issuekey in childIssuesOf(LIQ-129440)
 #     outputfile: ../mtrxbook-minimal/inst/extdata/liq_custom_defects.csv
-#GPP:
-#  Defects_AUG2020:
-#     created: "2020/08/01" 
-#     issuetypes: 
-#       - Epic
-#       - Story
-#     outputfile: ../mtrxbook-minimal/inst/extdata/gpp_delivery.csv
-#GPD:
-#  Defects_AUG2020:
-#     created: "2020/08/01" 
-#     issuetypes: 
-#       - Defect
-#     outputfile: ../mtrxbook-minimal/inst/extdata/gpp_defects.csv
+GPP:
+  Defects_AUG2020:
+     created: "2020/08/01" 
+     issuetypes: 
+       - Epic
+       - Story
+     outputfile: ../mtrxbook-minimal/inst/extdata/gpp_delivery.csv
+GPD:
+  Defects_AUG2020:
+     created: "2020/08/01" 
+     issuetypes: 
+       - Defect
+     outputfile: ../mtrxbook-minimal/inst/extdata/gpp_defects.csv
