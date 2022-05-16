@@ -36,7 +36,15 @@ else
                 echo "Error locking this execution. Exiting..."
                 exit 1
         fi
-        python "${BASE_DIR}/pgfetchdatasets.py" --config "${BASE_DIR}/pgfetchdatasets.yaml" > "${LOG_FILE}" 2>&1
-        cat "${LOG_FILE}"
-        rm -f "${LOCK_FILE}"
+        if [ -f "${BASE_DIR}/../../juka-env/bin/activate" ]; then
+                source ${BASE_DIR}/../../juka-env/bin/activate
+                python "${BASE_DIR}/pgfetchdatasets.py" --config "${BASE_DIR}/pgfetchdatasets.yaml" > "${LOG_FILE}" 2>&1
+                cat "${LOG_FILE}"
+                rm -f "${LOCK_FILE}"
+                exit 0
+        else
+                echo "Environment activation failed."
+                exit 200
+        fi
+        
 fi
