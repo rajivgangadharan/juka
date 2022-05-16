@@ -49,12 +49,12 @@ solutions:
         issuetypes:
           - Epic
           - Story
-        outputfile: ../../mtrxbook-minimal/inst/extdata/solution_gpp_delivery.csv
+        outputfile: ../../mtrxbook-minimal/inst/extdata/gpp_delivery.csv
       Defects_AUG2020:
         created: "2020/08/01"
         issuetypes:
           - Defect
-        outputfile: ../../mtrxbook-minimal/inst/extdata/solution_gpp_defects.csv
+        outputfile: ../../mtrxbook-minimal/inst/extdata/gpp_defects.csv
   SUMMIT:
     projects:
       - Summit
@@ -94,7 +94,6 @@ solutions:
         outputfile: ../../mtrxbook-minimal/inst/extdata/trk_defects.csv
   ESSENCE:
     projects:
-      - Fusion Risk 
       - FBE Core
       - FBE German SaaS
       - FBE Installation and Configuration

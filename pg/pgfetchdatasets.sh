@@ -2,12 +2,18 @@
 # Rajiv Gangadharan 2021-08-31
 # Purpose to schedule the data pull using cron
 
+if [ -f ./pgfetchdatasets.env ]; then
 . ./pgfetchdatasets.env
+else
+	echo "Environment setup failed from current directory."
+	echo "Carrying on..."
+fi
+echo "Using ${BASE_DIR} as BASE_DIR"
 BASE_DIR="${BASE_DIR}"
 LOCK_FILE="${BASE_DIR}/.pgfetchdatasets.lock"
 LOG_FILE="${BASE_DIR}/pgfetchdatasets.lastrun.log"
 
-if [ -f ${BASE_DIR}/../../juka-env/bin/activate ]; then
+if [ -f "${BASE_DIR}/../../juka-env/bin/activate" ]; then
  source ${BASE_DIR}/../../juka-env/bin/activate
 else
  echo "Environment activation failed."

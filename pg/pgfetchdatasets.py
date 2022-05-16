@@ -121,7 +121,7 @@ def main():
                             "Created",
                             "Updated",
                             "Closed",
-                            "Origin"
+                            "Origin",
                             "Reporter", 
                             "Assignee",
                             "Resolution"
@@ -176,7 +176,10 @@ def main():
                             "Created",
                             "Updated",
                             "Closed",
-                            "Origin"
+                            "Origin",
+                            "Reporter", 
+                            "Assignee",
+                            "Resolution"
                         ]
                     print(*header, sep='\t', file=of)
                     for i in issues:
