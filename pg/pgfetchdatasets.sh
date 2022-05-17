@@ -97,6 +97,8 @@ if [ -f "${LOCK_FILE}" ]; then
                 exit 100
         fi
 else
+        echo -n "Executing data pull..."
         data_pull
+        echo "Done"
 fi
 
