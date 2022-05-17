@@ -2,41 +2,101 @@
 # Rajiv Gangadharan 2021-08-31
 # Purpose to schedule the data pull using cron
 
-if [ -f ./pgfetchdatasets.env ]; then
-. ./pgfetchdatasets.env
+
+# Passing the base directory as a command line option
+function usage {
+        echo "Usage $(basename) [-h] [-d dirname] "
+        echo "./$(basename $0) -h --> shows usage"
+        echo "./$(basename $0) -d dirname --> sets the base directory"
+        echo "./$(basename $0) -f -d dirname --> forcing the run overrides locking"
+}
+
+if [[ ${#} -eq 0 ]]; then
+        usage
+        exit 1
+fi
+optstring=":hfd:"
+while getopts ${optstring} arg; do
+        case ${arg} in 
+                h)
+                        usage
+                        exit 1
+                        ;;
+                f)
+                        echo "WARNING!! Forcing the run, flag set."
+                        FORCE_RUN=1
+                        ;;
+                d)
+                        BASE_DIR=${OPTARG}
+                        echo "Base Dir $OPTARG assigned."
+                        ;;
+                ?)
+                        echo "Invalid parameter: -${OPTARG}."
+                        usage
+                        echo
+                        exit 1
+                        ;;
+        esac                
+done
+echo "Using ${BASE_DIR} as BASE_DIR"
+if [ -f "${BASE_DIR}/pgfetchdatasets.env" ]; then
+        echo -n "Environment is being setup.."
+        . "${BASE_DIR}/pgfetchdatasets.env"
+        echo "Done."
 else
 	echo "Environment setup failed from current directory."
-	echo "Carrying on..."
+	exit 100
 fi
-echo "Using ${BASE_DIR} as BASE_DIR"
-BASE_DIR="${BASE_DIR}"
+
 LOCK_FILE="${BASE_DIR}/.pgfetchdatasets.lock"
 LOG_FILE="${BASE_DIR}/pgfetchdatasets.lastrun.log"
 
-if [ -f ./pgfetchdatasets.env ]; then
-        . ./pgfetchdatasets.env
-else
-        . "${BASE_DIR}/.pgfetchdatasets.env"
-fi
-
-if [ -f "${LOCK_FILE}" ]; then
-        echo "Lock file exists, the last run did not finish. exiting."
-        exit 100
-else
-        touch "${LOCK_FILE}"
-        if [ $? -ne 0 ]; then
+function data_pull {
+        if [ -f "${LOCK_FILE}" ]; then
+                echo "data_pull - Lock ${LOCK_FILE} file exists, the last run did not finish"
+                return 1
+        else
+                touch "${LOCK_FILE}"
+        fi
+        
+        if [[ $? -ne 0 ]]; then
                 echo "Error locking this execution. Exiting..."
                 exit 1
         fi
         if [ -f "${BASE_DIR}/../../juka-env/bin/activate" ]; then
-                source ${BASE_DIR}/../../juka-env/bin/activate
+                source "${BASE_DIR}/../../juka-env/bin/activate"
                 python "${BASE_DIR}/pgfetchdatasets.py" --config "${BASE_DIR}/pgfetchdatasets.yaml" > "${LOG_FILE}" 2>&1
-                cat "${LOG_FILE}"
-                rm -f "${LOCK_FILE}"
-                exit 0
+                if [[ $? -eq 0 ]]; then
+                        cat "${LOG_FILE}"
+                        rm -f "${LOCK_FILE}"
+                        exit 0
+                else
+                        SUCCESS=0
+                        echo "Data pull failed."
+                        cat "${LOG_FILE}"
+                        exit 1
+                fi
+                
         else
-                echo "Environment activation failed."
+                echo "Environment activation failed, aborting."
+                echo -n "Count not run --> "
+                echo "${BASE_DIR}/../../juka-env/bin/activate"
                 exit 200
         fi
-        
+}
+
+if [ -f "${LOCK_FILE}" ]; then
+        echo "Lock ${LOCK_FILE} file exists, the last run did not finish."
+        if [[ ${FORCE_RUN} -eq 1 ]]; then
+                echo "Forcing run, force flag set, removing lock file."
+                rm -f "${LOCK_FILE}"
+                echo -n "Executing data pull..."
+                data_pull
+                echo "Done"
+        else
+                exit 100
+        fi
+else
+        data_pull
 fi
+
