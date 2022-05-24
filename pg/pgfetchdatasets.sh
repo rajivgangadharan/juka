@@ -30,6 +30,10 @@ while getopts ${optstring} arg; do
                         BASE_DIR=${OPTARG}
                         echo "Base Dir $OPTARG assigned."
                         ;;
+                c)
+                        AUTH_CONFIG_FILE=${OPTARG}
+                        echo "AUTH_CONFIG_FILE is set to $OPTARG."
+                        ;;
                 ?)
                         echo "Invalid parameter: -${OPTARG}."
                         usage
@@ -50,6 +54,7 @@ fi
 
 LOCK_FILE="${BASE_DIR}/.pgfetchdatasets.lock"
 LOG_FILE="${BASE_DIR}/pgfetchdatasets.lastrun.log"
+AUTH_CONFIG_FILE=${AUTH_CONFIG_FILE:-"${BASE_DIR}/pgconfig.yaml"}
 
 function data_pull {
         if [ -f "${LOCK_FILE}" ]; then
@@ -65,7 +70,7 @@ function data_pull {
         fi
         if [ -f "${BASE_DIR}/../../juka-env/bin/activate" ]; then
                 source "${BASE_DIR}/../../juka-env/bin/activate"
-                python "${BASE_DIR}/pgfetchdatasets.py" --config "${BASE_DIR}/pgfetchdatasets.yaml" > "${LOG_FILE}" 2>&1
+                python "${BASE_DIR}/pgfetchdatasets.py" --config "${BASE_DIR}/pgfetchdatasets.yaml" --auth-config ${AUTH_CONFIG_FILE}> "${LOG_FILE}" 2>&1
                 if [[ $? -eq 0 ]]; then
                         cat "${LOG_FILE}"
                         rm -f "${LOCK_FILE}"
