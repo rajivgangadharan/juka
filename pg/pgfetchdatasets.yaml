@@ -1,4 +1,7 @@
 ---
+run_params:
+  data_dir: "../../mtrxbook-minimal/inst/extdata/data_dir"
+  auth_config_file: "./pgconfig.yaml"
 projects:
   Opics:
     WorkItems_AUG2020:
@@ -6,38 +9,38 @@ projects:
       issuetypes:
         - Epic
         - Story
-      outputfile: ../../mtrxbook-minimal/inst/extdata/opics_delivery.csv
+      outputfile: opics_delivery.csv
     Defects_AUG2020:
       created: "2020/08/01"
       issuetypes:
         - Defect
-      outputfile: ../../mtrxbook-minimal/inst/extdata/opics_defects.csv
+      outputfile: opics_defects.csv
   Misys Portal Suite Scrum:
     WorkItems_AUG2020:
         created: "2020/08/01"
         issuetypes:
         - Epic
         - Story
-        outputfile: ../../mtrxbook-minimal/inst/extdata/fcc_delivery.csv
+        outputfile: fcc_delivery.csv
   Misys Portal Suite:
     Defects_AUG2020:
         created: "2020/08/01"
         issuetypes:
         - Defect
-        outputfile: ../../mtrxbook-minimal/inst/extdata/fcc_defects.csv
+        outputfile: fcc_defects.csv
   Loan IQ Scrum:
     WorkItems_AUG2020:
       created: "2020/08/01"
       issuetypes:
         - Epic
         - Story
-      outputfile: ../../mtrxbook-minimal/inst/extdata/liq_delivery.csv
+      outputfile: liq_delivery.csv
   Loan IQ:
     Defects_AUG2020:
       created: "2020/08/01"
       issuetypes:
         - Defect
-      outputfile: ../../mtrxbook-minimal/inst/extdata/liq_defects.csv
+      outputfile: liq_defects.csv
 solutions:
   GPP:
     projects:
@@ -49,12 +52,12 @@ solutions:
         issuetypes:
           - Epic
           - Story
-        outputfile: ../../mtrxbook-minimal/inst/extdata/gpp_delivery.csv
+        outputfile: gpp_delivery.csv
       Defects_AUG2020:
         created: "2020/08/01"
         issuetypes:
           - Defect
-        outputfile: ../../mtrxbook-minimal/inst/extdata/gpp_defects.csv
+        outputfile: gpp_defects.csv
   SUMMIT:
     projects:
       - Summit
@@ -64,12 +67,12 @@ solutions:
         issuetypes:
           - Epic
           - Story
-        outputfile: ../../mtrxbook-minimal/inst/extdata/summit_delivery.csv
+        outputfile: summit_delivery.csv
       Defects_AUG2020:
         created: "2020/08/01"
         issuetypes:
           - Defect
-        outputfile: ../../mtrxbook-minimal/inst/extdata/summit_defects.csv
+        outputfile: summit_defects.csv
   TRK:
     projects:
       - Fusion Risk 
@@ -86,12 +89,12 @@ solutions:
         issuetypes:
           - Epic
           - Story
-        outputfile: ../../mtrxbook-minimal/inst/extdata/trk_delivery.csv
+        outputfile: trk_delivery.csv
       Defects_AUG2020:
         created: "2020/08/01"
         issuetypes:
           - Defect
-        outputfile: ../../mtrxbook-minimal/inst/extdata/trk_defects.csv
+        outputfile: trk_defects.csv
   ESSENCE:
     projects:
       - FBE Core
@@ -132,9 +135,9 @@ solutions:
         issuetypes:
           - Epic
           - Story
-        outputfile: ../../mtrxbook-minimal/inst/extdata/essence_delivery.csv
+        outputfile: essence_delivery.csv
       Defects_AUG2020:
         created: "2020/08/01"
         issuetypes:
           - Defect
-        outputfile: ../../mtrxbook-minimal/inst/extdata/essence_defects.csv
+        outputfile: essence_defects.csv

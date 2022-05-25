@@ -23,10 +23,11 @@
 #
 # Module Jira Utilities for Maintaining Data. Rajiv Gangadharan (Sep.2017)
 from pprint import pprint
-import sys
+import sys, os
 from pgutils import PGConfigFile,PGConn
 from pgsolution import PGSolution
 from pgproject import PGProject
+from pathlib import Path
 import sys,yaml,logging
 import argparse
 import psycopg2
@@ -35,28 +36,19 @@ from string import Template
 def main():
     parser = argparse.ArgumentParser(prog='pgfetchsolutiondatasets',
      description="Assembling a dataset from Postgres Reporting Database for delivery insights")
-    parser.add_argument("--auth-config", help="YAML file with database connection parameters", default='pgconfig.yaml', required=False)
+    parser.add_argument("--auth-config", help="YAML file with database connection parameters", default='pgconfigx.yaml', required=False)
     parser.add_argument("--max-rows", help='Arrest the number of rows processed', required=False, default=25000)
     parser.add_argument("--config", help='Config file (default: pgfetchdatasets.yaml)', required=False, default="pgfetchdatasets.yaml")
     parser.add_argument("--log-level", help="Set your log level.", required=False, default="CRITICAL")
+    parser.add_argument("--data-dir", help="Data directory, defaults to home", required=False, default=None)
     args = parser.parse_args()
     max_rows = int(args.max_rows)
     run_config_file = args.config
     loglevel = args.log_level
     auth_config = args.auth_config
+    data_dir = args.data_dir
     username = password = server = None
     cfg = None
-    try:
-        cf = PGConfigFile(auth_config)
-        cfg = cf.config
-        username = cfg['username']
-        password = cfg['password']
-        server = cfg['server']
-        port = cfg['port']
-        database = cfg['database']
-    except FileNotFoundError as e:
-        logging.error("Config File does not exist." + e.strerror)
-        exit(1)
 
     numeric_log_level = getattr(logging, loglevel.upper())
     if (not isinstance(numeric_log_level, int)):
@@ -67,14 +59,8 @@ def main():
                         format="%(asctime)s %(message)s",
                         datefmt="%Y:%m:%d %H:%M:%S")
 
-
-    # Connect to jira
-    pg = PGConn(username, password, server, port, database)
-    pgconn = pg.pgconn
-    assert(pgconn != None)
-
     try:
-        print("YAML configurator not provided,  defaulting to solutionfetch.yaml.")
+        print("YAML configurator not provided.")
         with open(run_config_file, 'r') as file:
             dsconfig = yaml.safe_load(file)
             print(dsconfig)
@@ -84,6 +70,38 @@ def main():
     except Exception as e:
         print("Exception occured. ", e)
         exit(201)
+
+    if os.path.isfile(auth_config) is False:
+        print("The auth-config not found in args, will use config")
+        auth_config = os.path.abspath(dsconfig['run_params']['auth_config_file'])
+        print(f"*** Using {auth_config}")
+
+    try:
+        cf = PGConfigFile(auth_config)
+        cfg = cf.config
+        username = cfg['username']
+        password = cfg['password']
+        server = cfg['server']
+        port = cfg['port']
+        database = cfg['database']
+    except FileNotFoundError as e:
+        logging.error("Auth config File does not exist." + e.strerror)
+        exit(1)
+
+    # Connect to jira
+    pg = PGConn(username, password, server, port, database)
+    pgconn = pg.pgconn
+    assert(pgconn != None)
+
+###
+
+    if data_dir == None:
+        print("Data directory is unset, fetching it from config file.")
+        data_dir = os.path.abspath(dsconfig['run_params']['data_dir'])
+    else:
+        data_dir = os.path.abspath(data_dir)
+    
+    print(f"*** Data directory is set to {data_dir}")
 
     for level in dsconfig.keys():
         print(f"Processing level {level}")
@@ -97,7 +115,8 @@ def main():
                 for query in dsconfig[level][project].keys():
                     created = dsconfig[level][project][query]['created']
                     types = dsconfig[level][project][query]['issuetypes']
-                    output_file = dsconfig[level][project][query]['outputfile']
+                    output_file = os.path.join(data_dir, dsconfig[level][project][query]['outputfile'])
+                    print(f"From created date {created} with {types} writing to {output_file}")
                     issues = p.get_issues_for_query(types, created, max_rows=max_rows)
                     logging.info("Collected # " + str(len(issues)) + " issues.")
 
@@ -148,7 +167,7 @@ def main():
                     print(f"Query being processed is {query}")
                     created = dsconfig[level][solution]['queries'][query]['created']         
                     types = dsconfig[level][solution]['queries'][query]['issuetypes']
-                    output_file = dsconfig[level][solution]['queries'][query]['outputfile']
+                    output_file = os.path.join(data_dir, dsconfig[level][solution]['queries'][query]['outputfile'])
                     print(f"From created date {created} with {types} writing to {output_file}")
 
                     issues = s.get_issues_for_query( \
