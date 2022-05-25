@@ -117,20 +117,19 @@ function data_pull {
 }
 
 # Main logic starts here.
-data_pull
-# if [[ lock_execution -eq 0 ]]; then
-#         echo "Lock ${LOCK_FILE} was not successful."
-#         if [[ ${FORCE_RUN} -eq 1 ]]; then
-#                 echo "Forcing run, force flag set, removing lock file."
-#                 rm -f "${LOCK_FILE}"
-#                 echo -n "Executing data pull..."
-#                 data_pull
-#                 echo "Done"
-#         else
-#                 exit 100
-#         fi
-# else
-#         echo -n "Executing data pull..."
-#         data_pull
-#         echo "Done"
-# fi
+if [[ lock_execution -eq 0 ]]; then
+        echo "Lock ${LOCK_FILE} was not successful."
+        if [[ ${FORCE_RUN} -eq 1 ]]; then
+                echo "Forcing run, force flag set, removing lock file."
+                rm -f "${LOCK_FILE}"
+                echo -n "Executing data pull..."
+                data_pull
+                echo "Done"
+        else
+                exit 100
+        fi
+else
+        echo -n "Executing data pull..."
+        data_pull
+        echo "Done"
+fi
