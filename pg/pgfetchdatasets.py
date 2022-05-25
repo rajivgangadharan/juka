@@ -36,47 +36,78 @@ from string import Template
 def main():
     parser = argparse.ArgumentParser(prog='pgfetchsolutiondatasets',
      description="Assembling a dataset from Postgres Reporting Database for delivery insights")
-    parser.add_argument("--auth-config", help="YAML file with database connection parameters", default='pgconfigx.yaml', required=False)
-    parser.add_argument("--max-rows", help='Arrest the number of rows processed', required=False, default=25000)
-    parser.add_argument("--config", help='Config file (default: pgfetchdatasets.yaml)', required=False, default="pgfetchdatasets.yaml")
-    parser.add_argument("--log-level", help="Set your log level.", required=False, default="CRITICAL")
-    parser.add_argument("--data-dir", help="Data directory, defaults to home", required=False, default=None)
+    parser.add_argument("--auth-config", help="YAML file with database connection parameters", \
+        default='pgconfig.yaml', required=False)
+    parser.add_argument("--max-rows", help='Arrest the number of rows processed', \
+        required=False, default=25000)
+    parser.add_argument("--config", help='Config file (default: pgfetchdatasets.yaml)', \
+        required=False, default="pgfetchdatasets.yaml")
+    parser.add_argument("--log-level", help="Set your log level.", required=False, \
+        default="INFO")
+    parser.add_argument("--log-file", help="Log file name.", required=False, \
+        default="pgfetchdatasets.log")
+    parser.add_argument("--data-dir", help="Data directory, defaults to home", \
+        required=False, default=None)
     args = parser.parse_args()
     max_rows = int(args.max_rows)
     run_config_file = args.config
-    loglevel = args.log_level
+    log_level = args.log_level
     auth_config = args.auth_config
     data_dir = args.data_dir
     username = password = server = None
+    log_file_name = args.log_file
     cfg = None
 
-    numeric_log_level = getattr(logging, loglevel.upper())
+    numeric_log_level = getattr(logging, log_level.upper())
     if (not isinstance(numeric_log_level, int)):
         raise ValueError("Invalid numeric_log_level : %s" % numeric_log_level)
-    logging.basicConfig(filename="pgfetchdataset.log",
-                        level=numeric_log_level,
-                        filemode='a',
-                        format="%(asctime)s %(message)s",
-                        datefmt="%Y:%m:%d %H:%M:%S")
+
+    log_format_str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    logger = logging.getLogger('pgfetchdatasets')
+    logger.setLevel(numeric_log_level)
+
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(numeric_log_level)
+
+    # Log Handler
+    print(f">>> Logging into {log_file_name} with log level {numeric_log_level} - {log_level.upper()}")
+    log_file_handler = logging.FileHandler(filename=log_file_name)
+    log_file_handler.setFormatter(log_format_str)
+
+    # Formatter
+    formatter = logging.Formatter(log_format_str)
+
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    logger.addHandler(log_file_handler)
 
     try:
-        print("YAML configurator not provided.")
         with open(run_config_file, 'r') as file:
             dsconfig = yaml.safe_load(file)
-            print(dsconfig)
+            logger.info(dsconfig)
     except FileNotFoundError as e:
-        print(f'Error, yaml configurator absent, does file exist? {e}')
+        logger.error('Error, yaml configuration absent')
+        print(f'Yaml configurator absent, does file exist? {e}')
         exit(200)
     except Exception as e:
         print("Exception occured. ", e)
         exit(201)
 
-    if os.path.isfile(auth_config) is False:
-        print("The auth-config not found in args, will use config")
-        auth_config = os.path.abspath(dsconfig['run_params']['auth_config_file'])
-        print(f"*** Using {auth_config}")
+    logger.info('YAML configurator for data pull processed.')
+    logger.info('continuing to process authentication.')
+
 
     try:
+        if os.path.isfile(auth_config) is False:
+            logger.warning("The authorization file not found in args, will use config")
+            auth_config = os.path.abspath(dsconfig['run_params']['auth_config_file'])
+            print(f"*** Using {auth_config}")
+            logger.info('*** Using %s from configurator' % (auth_config))
+            if auth_config is None or os.path.isfile(auth_config) is False:
+                logger.critical('No config for Authorization file %s is invalid' % (auth_config))
+                logger.critical('Auth info is still unavailable')
+                raise FileNotFoundError()
         cf = PGConfigFile(auth_config)
         cfg = cf.config
         username = cfg['username']
@@ -85,27 +116,36 @@ def main():
         port = cfg['port']
         database = cfg['database']
     except FileNotFoundError as e:
-        logging.error("Auth config File does not exist." + e.strerror)
+        logger.error("Auth config File does not exist. %s" % (e.strerror))
         exit(1)
 
-    # Connect to jira
-    pg = PGConn(username, password, server, port, database)
-    pgconn = pg.pgconn
-    assert(pgconn != None)
+    # Connect to Postgres
+    try:
+        pg = PGConn(username, password, server, port, database)
+        pgconn = pg.pgconn
+        assert(pgconn != None)
+        logger.info("Database connection is complete")
+    except AssertionError as ae:
+        logger.critical('Assertion error caught pgconn has issues.')
+        exit(100)
+    except Exception as e:
+        logger.critical('Database connection throws exception %s' % e)
+        exit(100)
 
 ###
 
     if data_dir == None:
         print("Data directory is unset, fetching it from config file.")
+        logger.info("Data directory is unset, fetching it from config file.")
         data_dir = os.path.abspath(dsconfig['run_params']['data_dir'])
     else:
         data_dir = os.path.abspath(data_dir)
     
     print(f"*** Data directory is set to {data_dir}")
-
+    logger.info('*** Data directory is set to %s' % (data_dir))
     for level in dsconfig.keys():
         print(f"Processing level {level}")
-        logging.info("####### " + level + " ########")
+        logging.info("####### %s ########" % (level))
         if level == 'projects':
             for project in dsconfig[level].keys():
                 print(f"Processing project {project}")
