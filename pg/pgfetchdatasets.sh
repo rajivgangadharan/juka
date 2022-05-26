@@ -84,7 +84,7 @@ function setup_local_env {
 function lock_execution {
         if [ -f "${LOCK_FILE}" ]; then
                 echo "Lock ${LOCK_FILE} file exists, the last run did not finish"
-                return FAIL
+                return $FAIL
         else
                 echo "Locking run, creating lock file ${LOCK_FILE}"
                 touch "${LOCK_FILE}"
@@ -93,7 +93,7 @@ function lock_execution {
                         return FAIL
                 fi
         fi
-        return SUCCESS
+        return $SUCCESS
 }
 
 function data_pull {
@@ -104,19 +104,19 @@ function data_pull {
                 if [[ $? -eq 0 ]]; then
                         echo "Data pull successful."
                         rm -f "${LOCK_FILE}"
-                        exit JOBSUCC
+                        exit $JOBSUCC
                 else
                         SUCCESS=0
                         echo "Data pull failed."
                         cat "${LOG_FILE}"
-                        exit JOBABEN
+                        exit $JOBABEN
                 fi
                 
         else
                 echo "Environment activation failed, aborting."
                 echo -n "Count not run --> "
                 echo "${ENV_FILE}"
-                exit JOBABEN
+                exit $JOBABEN
         fi
 }
 
@@ -130,7 +130,7 @@ if lock_execution; then
                 data_pull
                 echo "Done"
         else
-                exit JOBSUCC
+                exit $JOBSUCC
         fi
 else
         echo -n "Executing data pull..."
