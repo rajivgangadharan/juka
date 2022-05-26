@@ -1,7 +1,7 @@
 ---
 run_params:
-  data_dir: "/c/Users/rgangadh/code/Work/Code/mtrxbook-minimal/inst/extdata"
-  auth_config_file: "/c/Users/rgangadh/code/Work/Code/juka/pg/pgconfig.yaml"
+  data_dir: "/disks/app/mtrxbook-minimal/inst/extdata/"
+  auth_config_file: "/disks/app/juka/pg/pgconfig.yaml"
 projects:
   Opics:
     WorkItems_AUG2020:
