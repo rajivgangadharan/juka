@@ -60,6 +60,10 @@ LOG_FILE=${LOG_FILE:-"${BASE_DIR}/pgfetchdatasets.lastrun.log"}
 AUTH_CONFIG_FILE=${AUTH_CONFIG_FILE:-"${BASE_DIR}/pgconfig.yaml"}
 ENV_FILE=${ENV_FILE:-"${BASE_DIR}/../../juka-env/bin/activate"}
 CONFIG_FILE=${CONFIG_FILE:-"${BASE_DIR}/pgfetchdatasets.yaml"}
+SUCCESS=1
+FAIL=0
+JOBABEN=100
+JOBSUCC=0
 
 echo " ===========  RUN PARAMETERS =========="
 echo "Env file ${ENV_FILE}"
@@ -80,16 +84,16 @@ function setup_local_env {
 function lock_execution {
         if [ -f "${LOCK_FILE}" ]; then
                 echo "Lock ${LOCK_FILE} file exists, the last run did not finish"
-                return 1
+                return FAIL
         else
                 echo "Locking run, creating lock file ${LOCK_FILE}"
                 touch "${LOCK_FILE}"
+                if [[ $? -ne 0 ]]; then
+                        echo "Error locking this execution, returning zero."
+                        return FAIL
+                fi
         fi
-        
-        if [[ $? -ne 0 ]]; then
-                echo "Error locking this execution, returning zero."
-                return 0
-        fi
+        return SUCCESS
 }
 
 function data_pull {
@@ -100,24 +104,24 @@ function data_pull {
                 if [[ $? -eq 0 ]]; then
                         echo "Data pull successful."
                         rm -f "${LOCK_FILE}"
-                        exit 0
+                        exit JOBSUCC
                 else
                         SUCCESS=0
                         echo "Data pull failed."
                         cat "${LOG_FILE}"
-                        exit 1
+                        exit JOBABEN
                 fi
                 
         else
                 echo "Environment activation failed, aborting."
                 echo -n "Count not run --> "
                 echo "${ENV_FILE}"
-                exit 200
+                exit JOBABEN
         fi
 }
 
 # Main logic starts here.
-if [[ lock_execution -eq 0 ]]; then
+if lock_execution; then
         echo "Lock ${LOCK_FILE} was not successful."
         if [[ ${FORCE_RUN} -eq 1 ]]; then
                 echo "Forcing run, force flag set, removing lock file."
@@ -126,7 +130,7 @@ if [[ lock_execution -eq 0 ]]; then
                 data_pull
                 echo "Done"
         else
-                exit 100
+                exit JOBSUCC
         fi
 else
         echo -n "Executing data pull..."
